@@ -21,6 +21,7 @@ TagManager:
   - SafeSegmentStart
   - SafeSegmentMid
   - SafeSegmentEnd
+  - SafeSegmentFinish
   layers:
   - Default
   - TransparentFX

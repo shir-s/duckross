@@ -201,6 +201,7 @@ MonoBehaviour:
   - {fileID: 5204594943632346117, guid: 23c296917b81ddf4db3668214d5847a3, type: 3}
   - {fileID: 5204594943632346117, guid: cc030c3b3e1897c4d9921544c8e5b10b, type: 3}
   - {fileID: 5204594943632346117, guid: 1088b17b09de6a74aacf06c1fdb66669, type: 3}
+  - {fileID: 5204594943632346117, guid: f2f8a91a141579644ad6b62d67f5a82f, type: 3}
   defaultPoolSize: 200
 --- !u!4 &134957695
 Transform:
@@ -319,6 +320,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &264543664
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 264543665}
+  - component: {fileID: 264543666}
+  m_Layer: 0
+  m_Name: EventManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &264543665
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264543664}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -11.022238, y: 1.6348491, z: 4.298195}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &264543666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264543664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d8a6194b3af6d44fb904e79dcf2cebe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &316527694
 GameObject:
   m_ObjectHideFlags: 0
@@ -1255,7 +1300,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1103920322}
-  - component: {fileID: 1103920323}
   - component: {fileID: 1103920321}
   m_Layer: 0
   m_Name: WorldManager
@@ -1288,10 +1332,7 @@ MonoBehaviour:
   groupMinCount: 3
   groupMaxCount: 7
   initialSafeZoneCount: 6
-  safeZoneTag: SafeZone
-  baseMinConsecutiveNonFruit: 2
-  baseMaxConsecutiveNonFruit: 4
-  logMultiplier: 1
+  finishZoneInterval: 50
 --- !u!4 &1103920322
 Transform:
   m_ObjectHideFlags: 0
@@ -1307,18 +1348,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1103920323
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1103920320}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83947a467157e8242a326d67a833e93d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1169673892
 GameObject:
   m_ObjectHideFlags: 0
@@ -2595,3 +2624,4 @@ SceneRoots:
   - {fileID: 1327530963}
   - {fileID: 1265244732}
   - {fileID: 1447199649}
+  - {fileID: 264543665}

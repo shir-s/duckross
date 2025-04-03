@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
+using Managers;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
 {
@@ -11,21 +10,24 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
     [SerializeField] private float destroyDistanceBehind = 15f;  // When to remove an old segment (based on player's z)
     [SerializeField] private int initialSegmentCount = 5;        // Additional segments to spawn after initial safe zones.
 
-    // List of base segment kinds (e.g., "RoadSegment", "FruitSegment", "SafeZone", etc.).
-    // For each type, you must have corresponding prefabs with names that follow:
-    //   Base, BaseStart, and BaseMid (and BaseEnd if needed).
+    // List of base segment kinds (e.g., "RoadSegment", "FruitSegment", etc.).
+    // For non-safe zones, your pool should contain prefabs with names like "RoadSegmentStart", "RoadSegmentMid", "RoadSegmentEnd", etc.
     [SerializeField] private List<string> segmentTags;
 
     // World start position on the z axis.
     [SerializeField] private float worldStartZ = 0f;
 
-    // Group spawn settings – each group (except safe zones) will contain between these many segments.
+    // Group spawn settings for normal segments.
     [SerializeField] private int groupMinCount = 3;
     [SerializeField] private int groupMaxCount = 7;
 
-    // New: Settings for safe zones.
-    [SerializeField] private int initialSafeZoneCount = 6; // Always spawn exactly these many at game start.
-    [SerializeField] private string safeZoneTag = "SafeSegment"; // The base tag for safe zone segments.
+    // Safe zone settings.
+    private string safeZoneTag = "SafeSegment"; // Base tag for safe zone segments.
+    [SerializeField] private int initialSafeZoneCount = 6; // Initial safe zone group count if desired.
+    [SerializeField] private float finishZoneInterval = 50f;  // Constant distance between finish zone groups.
+
+    // Internal tracking for safe zone spawn.
+    private float nextFinishZoneZ;
 
     // Instead of using player position as our base, we keep track of where the next segment should be placed.
     private float nextSegmentZ;
@@ -33,7 +35,7 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
     // Queue to keep track of active segments.
     private Queue<GameObject> activeSegments = new Queue<GameObject>();
 
-    // Counters to track segment types.
+    // Counters to track segment types (for non-safe segments).
     private string previousSegmentTag = "";
     private bool firstSegment;
 
@@ -66,6 +68,15 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
 
     void SpawnSegment()
     {
+        // First, check if it's time to spawn a safe zone group.
+        if (nextSegmentZ >= nextFinishZoneZ && !previousSegmentTag.Equals(safeZoneTag))
+        {
+            Debug.Log("Safe Zone Finish");
+            SpawnFinishZoneGroup();
+            nextFinishZoneZ += finishZoneInterval;
+            return;
+        }
+        
         // 1. Choose the base segment type.
         // 2. Choose a random group count between groupMinCount and groupMaxCount (inclusive).
 
@@ -73,25 +84,15 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         int groupCount = Random.Range(groupMinCount, groupMaxCount + 1);
         List<string> availableTags = new List<string>(segmentTags);
         
-        if (firstSegment)
+        do
         {
-            firstSegment = false;
-            chosenTag = "SafeSegment";
-            groupCount = 6;
-        }
-        else
-        {
-            do
-            {
-                int index = Random.Range(0, availableTags.Count);
-                chosenTag = availableTags[index];
-            } 
-            while(chosenTag.Equals(previousSegmentTag));
+            int index = Random.Range(0, availableTags.Count);
+            chosenTag = availableTags[index];
+        } while(chosenTag.Equals(previousSegmentTag));
             
-            if (chosenTag.Equals("SafeSegment"))
-            {
-                groupCount = 2;
-            }
+        if (chosenTag.Equals("SafeSegment"))
+        {
+            groupCount = 2;
         }
         
         previousSegmentTag = chosenTag;
@@ -124,9 +125,25 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         }
     }
 
+    // Spawns the safe zone group.
+    void SpawnFinishZoneGroup()
+    {
+        Debug.Log($"Spawning finish zone group with tag: {safeZoneTag}");
+        // Safe zone group always consists of three segments:
+        // SafeSegmentStart, SafeSegmentFinish, SafeSegmentEnd.
+        SpawnSingleSegment(safeZoneTag + "Start");
+        SpawnSingleSegment(safeZoneTag + "Finish");
+        SpawnSingleSegment(safeZoneTag + "End");
+        previousSegmentTag = safeZoneTag;
+    }
+
     // Helper method to spawn a single segment with the given tag.
     private void SpawnSingleSegment(string tag)
     {
+        if (tag.EndsWith("Finish"))
+        {
+            Debug.Log("Spawning finish zone with tag: " + tag);
+        }
         // Position the new segment relative to the player's x position.
         Vector3 spawnPosition = new Vector3(player.transform.position.x, 0, nextSegmentZ);
         GameObject newSegment = poolManager.GetSegmentFromPool(tag, spawnPosition, Quaternion.identity);
@@ -139,39 +156,23 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         }
     }
 
-    // IGameStateListener implementation:
-    public void OnGameStart()
+    private void OnEnable()
     {
-        Debug.Log("Game started");
-        isGameActive = true;
-
-        // Reset generator state.
-        nextSegmentZ = worldStartZ;
-        firstSegment = true;
-        previousSegmentTag = "";
-        activeSegments.Clear();
-
-        // Reactivate the player.
-        if (player != null)
-            player.gameObject.SetActive(true);
-
-        
-        SpawnSingleSegment(safeZoneTag+"Start");
-        // Spawn a constant number of safe zones.
-        for (int i = 0; i < initialSafeZoneCount-2; i++)
+        if (EventManager.Instance != null)
         {
-            SpawnSingleSegment(safeZoneTag+"Mid");
-        }
-        SpawnSingleSegment(safeZoneTag+"End");
-        
-        // Then spawn the initial regular segments.
-        for (int i = 0; i < initialSegmentCount; i++)
-        {
-            SpawnSegment();
+            EventManager.Instance.OnGameStartEvent += HandleGameStart;
+            EventManager.Instance.OnGameOverEvent += HandleGameOver;
+            EventManager.Instance.OnGameRestartEvent += HandleGameRestart;
         }
     }
 
-    public void OnGameOver()
+    public void HandleGameRestart()
+    {
+        HandleGameOver();
+        HandleGameStart();
+    }
+
+    public void HandleGameOver()
     {
         isGameActive = false;
 
@@ -188,16 +189,53 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
             player.gameObject.SetActive(false);
     }
 
-    private void OnEnable()
+    public void HandleGameStart()
     {
-        if (WorldManager.Instance != null)
-            WorldManager.Instance.RegisterListener(this);
+        Debug.Log("Game started");
+        isGameActive = true;
+
+        // Reset generator state.
+        nextSegmentZ = worldStartZ;
+        nextFinishZoneZ = worldStartZ + finishZoneInterval;
+        firstSegment = true;
+        previousSegmentTag = "";
+        activeSegments.Clear();
+
+        // Reactivate the player.
+        if (player != null)
+            player.gameObject.SetActive(true);
+
+        // Optionally spawn initial safe zones (if desired, you can do this here).
+        SpawnStartZoneGroup();
+
+        // Then spawn the initial regular segments.
+        for (int i = 0; i < initialSegmentCount; i++)
+        {
+            SpawnSegment();
+        }
+    }
+
+    private void SpawnStartZoneGroup()
+    {
+        SpawnSingleSegment(safeZoneTag+"Start");
+        // Spawn a constant number of safe zones.
+        for (int i = 0; i < initialSafeZoneCount-2; i++)
+        {
+            SpawnSingleSegment(safeZoneTag+"Mid");
+        }
+        SpawnSingleSegment(safeZoneTag+"End");
+        previousSegmentTag = safeZoneTag;
     }
 
     private void OnDisable()
     {
-        if (WorldManager.Instance != null)
-            WorldManager.Instance.UnregisterListener(this);
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.OnGameStartEvent -= HandleGameStart;
+            EventManager.Instance.OnGameOverEvent -= HandleGameOver;
+            EventManager.Instance.OnGameRestartEvent -= HandleGameRestart;
+        }
     }
 }
+
 

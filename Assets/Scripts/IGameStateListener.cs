@@ -1,6 +1,6 @@
 public interface IGameStateListener
 {
-    void OnGameStart();
-    void OnGameOver();
+    void HandleGameStart();
+    void HandleGameOver();
 }
 

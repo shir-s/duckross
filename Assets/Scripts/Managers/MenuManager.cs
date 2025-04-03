@@ -1,3 +1,4 @@
+using Managers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -36,10 +37,10 @@ public class MenuManager : MonoBehaviour
         
         Debug.Log("Starting Game");
         
-        if (WorldManager.Instance != null)
+        if (EventManager.Instance != null)
         {
             Debug.Log("Starting Game1");
-            WorldManager.Instance.StartGame();
+            EventManager.Instance.StartGame();
         }
         else
         {

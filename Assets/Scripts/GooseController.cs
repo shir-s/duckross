@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Managers;
 using UnityEngine;
 
 public class GooseController : MonoBehaviour
@@ -123,11 +124,6 @@ public class GooseController : MonoBehaviour
 
     private void OnEnable()
     {
-        /*SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        if (sr != null)
-        {
-            sr.enabled = true;
-        }*/
         isJumping = false;
         transform.position = startPosition;
         targetPosition = transform.position;
@@ -147,6 +143,6 @@ public class GooseController : MonoBehaviour
 
     private void GameOver()
     {
-        WorldManager.Instance.EndGame();
+        EventManager.Instance.EndGame();
     }
 }

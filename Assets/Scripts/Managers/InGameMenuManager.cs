@@ -1,3 +1,4 @@
+using Managers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -52,16 +53,16 @@ public class InGameMenuManager : MonoBehaviour
     // Returns to the main menu scene.
     private void ReturnToMainMenu()
     {
-        WorldManager.Instance.EndGame();
+        EventManager.Instance.EndGame();
         HideMenu();
     }
 
     // Restarts the game by calling a method on your WorldManager.
     private void RestartGame()
     {
-        if (WorldManager.Instance != null)
+        if (EventManager.Instance != null)
         {
-            WorldManager.Instance.RestartGame();
+            EventManager.Instance.RestartGame();
         }
         HideMenu();
     }
