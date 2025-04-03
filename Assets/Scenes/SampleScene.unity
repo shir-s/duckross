@@ -148,11 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43b2d4edf87d86c41bcb731296bb00a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectPrefabs:
-  - {fileID: 6555248622022947617, guid: d53eb5d3066d9ed40a519bce21193749, type: 3}
-  - {fileID: 5152429512342820788, guid: c36ed339a5173234bb82dbe262c117a6, type: 3}
-  - {fileID: 4076254355018491911, guid: b593f99005a469643a6daeb7942864e9, type: 3}
-  - {fileID: 7418795591229077334, guid: cb40a6c55d6258947a5cace21112d91b, type: 3}
+  objectPrefabs: []
   defaultPoolSize: 200
 --- !u!4 &38022696
 Transform:
@@ -199,8 +195,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   segmentPrefabs:
+  - {fileID: 630318687636832141, guid: 9b87ad7e24dd0444ebba384afabbf346, type: 3}
+  - {fileID: 630318687636832141, guid: 90cee7904d074134eb2a51a479654307, type: 3}
   - {fileID: 630318687636832141, guid: 30c7e61ebc0b7f743b8ff3faf88ae957, type: 3}
   - {fileID: 5204594943632346117, guid: 23c296917b81ddf4db3668214d5847a3, type: 3}
+  - {fileID: 5204594943632346117, guid: cc030c3b3e1897c4d9921544c8e5b10b, type: 3}
+  - {fileID: 5204594943632346117, guid: 1088b17b09de6a74aacf06c1fdb66669, type: 3}
   defaultPoolSize: 200
 --- !u!4 &134957695
 Transform:
@@ -1283,8 +1283,12 @@ MonoBehaviour:
   initialSegmentCount: 60
   segmentTags:
   - RoadSegment
-  - FruitSegment
+  - SafeSegment
   worldStartZ: 0
+  groupMinCount: 3
+  groupMaxCount: 7
+  initialSafeZoneCount: 6
+  safeZoneTag: SafeZone
   baseMinConsecutiveNonFruit: 2
   baseMaxConsecutiveNonFruit: 4
   logMultiplier: 1

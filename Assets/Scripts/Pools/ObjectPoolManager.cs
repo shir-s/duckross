@@ -19,7 +19,6 @@ public class ObjectPoolManager : MonoBehaviour
             return;
         }
         Instance = this;
-        // Optionally: DontDestroyOnLoad(gameObject);
     }
 
     private void Start()

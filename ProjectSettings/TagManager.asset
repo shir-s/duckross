@@ -12,6 +12,15 @@ TagManager:
   - Car
   - Chick
   - Truck
+  - RoadSegmentStart
+  - RoadSegmentMid
+  - RoadSegmentEnd
+  - WaterSegmentStart
+  - WaterSegmentMid
+  - WaterSegmentEnd
+  - SafeSegmentStart
+  - SafeSegmentMid
+  - SafeSegmentEnd
   layers:
   - Default
   - TransparentFX
