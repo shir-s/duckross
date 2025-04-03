@@ -1,4 +1,5 @@
 using System;
+using Managers;
 using UnityEngine;
 
 public class EventManager : MonoBehaviour
@@ -14,6 +15,7 @@ public class EventManager : MonoBehaviour
     public event Action OnGameStartEvent;
     public event Action OnGameOverEvent;
     public event Action OnGameRestartEvent;
+    public event Action OnMainMenuEvent;
 
     private void Awake()
     {
@@ -51,6 +53,10 @@ public class EventManager : MonoBehaviour
         GameStarted = false;
         TriggerGameOver();
         // Additional game-over logic can be added here.
+        if (!isRestarting)
+        {
+            TriggerMainMenu();
+        }
     }
 
     /// <summary>
@@ -80,5 +86,10 @@ public class EventManager : MonoBehaviour
     {
         Debug.Log("EventManager: Triggering Game Restart event");
         OnGameRestartEvent?.Invoke();
+    }
+    
+    private void TriggerMainMenu()
+    {
+        OnMainMenuEvent?.Invoke();
     }
 }

@@ -1,73 +1,79 @@
-using Managers;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-public class MenuManager : MonoBehaviour
+namespace Managers
 {
-    public static MenuManager Instance { get; private set; }
-
-    // Reference to the entire Canvas that holds your menu.
-    [SerializeField] private GameObject menuCanvas;
-
-    private void Awake()
+    public class MenuManager : MonoBehaviour
     {
-        // Singleton pattern: if an instance already exists, destroy this one.
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        // Optionally, you can keep the MenuManager between scenes:
-        // DontDestroyOnLoad(gameObject);
-    }
+        public static MenuManager Instance { get; private set; }
 
-    // This method will be called when the Start button is clicked.
-    public void StartGame()
-    {
-        if (menuCanvas != null)
-        {
-            menuCanvas.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning("Menu Canvas is not assigned!");
-        }
-        
-        Debug.Log("Starting Game");
-        
-        if (EventManager.Instance != null)
-        {
-            Debug.Log("Starting Game1");
-            EventManager.Instance.StartGame();
-        }
-        else
-        {
-            Debug.LogWarning("WorldManager instance not found!");
-        }
-    }
+        // Reference to the entire Canvas that holds your menu.
+        [SerializeField] private GameObject menuCanvas;
 
-    // This method will be called when the Quit button is clicked.
-    public void QuitGame()
-    {
+        private void Awake()
+        {
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.OnMainMenuEvent += TriggerMainMenu;
+            }
+            // Singleton pattern: if an instance already exists, destroy this one.
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+            // Optionally, you can keep the MenuManager between scenes:
+            // DontDestroyOnLoad(gameObject);
+        }
+
+        private void TriggerMainMenu()
+        {
+            ReturnToMainMenu();
+        }
+
+        // This method will be called when the Start button is clicked.
+        public void StartGame()
+        {
+            if (menuCanvas != null)
+            {
+                menuCanvas.SetActive(false);
+            }
+            else
+            {
+                Debug.LogWarning("Menu Canvas is not assigned!");
+            }
+            
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.StartGame();
+            }
+            else
+            {
+                Debug.LogWarning("WorldManager instance not found!");
+            }
+        }
+
+        // This method will be called when the Quit button is clicked.
+        public void QuitGame()
+        {
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false;
 #else
         Application.Quit();
 #endif
-    }
-    
-    // This method will be called when the player wants to return to the main menu.
-    public void ReturnToMainMenu()
-    {
-        if (menuCanvas != null)
-        {
-            menuCanvas.SetActive(true);
         }
-        else
+    
+        // This method will be called when the player wants to return to the main menu.
+        public void ReturnToMainMenu()
         {
-            Debug.LogWarning("Menu Canvas is not assigned!");
+            if (menuCanvas != null)
+            {
+                menuCanvas.SetActive(true);
+            }
+            else
+            {
+                Debug.LogWarning("Menu Canvas is not assigned!");
+            }
         }
     }
 }

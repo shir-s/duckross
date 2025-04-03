@@ -148,7 +148,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43b2d4edf87d86c41bcb731296bb00a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectPrefabs: []
+  objectPrefabs:
+  - {fileID: 5152429512342820788, guid: c36ed339a5173234bb82dbe262c117a6, type: 3}
+  - {fileID: 7418795591229077334, guid: cb40a6c55d6258947a5cace21112d91b, type: 3}
+  - {fileID: 4076254355018491911, guid: b593f99005a469643a6daeb7942864e9, type: 3}
+  - {fileID: 6555248622022947617, guid: d53eb5d3066d9ed40a519bce21193749, type: 3}
   defaultPoolSize: 200
 --- !u!4 &38022696
 Transform:

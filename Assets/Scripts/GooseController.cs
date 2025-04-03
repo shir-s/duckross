@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Managers;
+using Pools;
 using UnityEngine;
 
 public class GooseController : MonoBehaviour
@@ -89,7 +90,7 @@ public class GooseController : MonoBehaviour
     // Retrieves a chick from the pool and adds it to the chicks list.
     private void AddChick()
     {
-        GameObject chick = ObjectPoolManager.Instance.GetObjectFromPool("Chick", transform.position, Quaternion.identity);
+        GameObject chick = ObjectPoolManager.Instance.GetObjectFromPool("Chick", transform.position);
         if (chick != null)
         {
             chicks.Add(chick);

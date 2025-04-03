@@ -5,11 +5,13 @@ public class ObjectPoolManager : MonoBehaviour
 {
     public static ObjectPoolManager Instance { get; private set; }
 
-    [SerializeField] private List<GameObject> objectPrefabs; // Assign all object prefabs here (cars, fruits, etc.)
+    [SerializeField] private List<GameObject> objectPrefabs; // Assign all object prefabs here.
     [SerializeField] private int defaultPoolSize = 200;         // Number of instances per object type.
 
-    // Dictionary: key = prefab name, value = queue of pooled object instances.
+    // Dictionary that maps a prefab name to its pool.
     private Dictionary<string, Queue<GameObject>> poolDictionary;
+    // Dictionary to store each prefab's original rotation.
+    private Dictionary<string, Quaternion> prefabRotations;
 
     private void Awake()
     {
@@ -24,24 +26,33 @@ public class ObjectPoolManager : MonoBehaviour
     private void Start()
     {
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
+        prefabRotations = new Dictionary<string, Quaternion>();
 
-        // For each object prefab, create its pool.
+        // For each object prefab, create its pool and store its original rotation.
         foreach (GameObject prefab in objectPrefabs)
         {
             string tag = prefab.name;
             Queue<GameObject> pool = new Queue<GameObject>();
+
+            // Store the prefab's original rotation.
+            if (!prefabRotations.ContainsKey(tag))
+            {
+                prefabRotations.Add(tag, prefab.transform.rotation);
+            }
+
             for (int i = 0; i < defaultPoolSize; i++)
             {
                 GameObject obj = Instantiate(prefab);
                 obj.SetActive(false);
                 pool.Enqueue(obj);
             }
+
             poolDictionary.Add(tag, pool);
         }
     }
 
     // Retrieves an object from the pool (or instantiates a new one if empty).
-    public GameObject GetObjectFromPool(string tag, Vector3 position, Quaternion rotation)
+    public GameObject GetObjectFromPool(string tag, Vector3 position)
     {
         if (!poolDictionary.ContainsKey(tag))
         {
@@ -51,6 +62,9 @@ public class ObjectPoolManager : MonoBehaviour
 
         Queue<GameObject> pool = poolDictionary[tag];
         GameObject obj;
+    
+        // Look up the original rotation from our stored prefab rotations.
+        Quaternion originalRotation = prefabRotations.ContainsKey(tag) ? prefabRotations[tag] : Quaternion.identity;
 
         if (pool.Count == 0)
         {
@@ -61,13 +75,13 @@ public class ObjectPoolManager : MonoBehaviour
                 Debug.LogWarning($"No object prefab found for tag '{tag}'.");
                 return null;
             }
-            obj = Instantiate(prefab, position, rotation);
+            obj = Instantiate(prefab, position, originalRotation);
         }
         else
         {
             obj = pool.Dequeue();
             obj.transform.position = position;
-            obj.transform.rotation = rotation;
+            obj.transform.rotation = originalRotation;
             obj.SetActive(true);
         }
 
@@ -88,3 +102,4 @@ public class ObjectPoolManager : MonoBehaviour
         }
     }
 }
+

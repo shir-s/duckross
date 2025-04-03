@@ -1,37 +1,38 @@
+using Pools;
 using UnityEngine;
 
 namespace Segments
 {
     public class SafeSegment : Segment
     {
-        [SerializeField] private GameObject fruitPrefab;  // Assign your fruit prefab in the Inspector.
-        [SerializeField] private float yOffset = 5f;        // How much above the segment to spawn the fruit.
+        [SerializeField] private GameObject chickToPickPrefab;  // Assign your chick prefab in the Inspector.
+        [SerializeField] private float yOffset = 5f;        // How much above the segment to spawn the chick.
 
-        private bool fruitSpawned = false; // Ensure fruit is spawned only once per activation.
-        private GameObject fruit;
+        private bool chickToPickSpawned = false; // Ensure chick is spawned only once per activation.
+        private GameObject chickToPick;
 
         private void OnEnable()
         {
             // Reset flag each time the segment is activated.
-            fruitSpawned = false;
+            chickToPickSpawned = false;
 
-            // With 33% chance, spawn one fruit (if not already spawned).
-            if (!fruitSpawned && Random.value < 0.33f && transform.position.z > 2)
+            // With 33% chance, spawn one chick (if not already spawned).
+            if (!chickToPickSpawned && Random.value < 0.33f && transform.position.z > 2)
             {
-                SpawnFruit();
+                SpawnChick();
             }
         }
 
-        private void SpawnFruit()
+        private void SpawnChick()
         {
-            fruitSpawned = true; // Mark that we've spawned a fruit for this activation.
+            chickToPickSpawned = true; // Mark that we've spawned a chick for this activation.
 
             // Get half the segment's width.
             float halfWidth = GetXLength() * 0.5f;
             // Randomize x offset within the segment's width.
             float xOffset = Random.Range(-halfWidth, halfWidth);
 
-            // The fruit's spawn position:
+            // The chick's spawn position:
             // - x: segment center + random offset within width.
             // - y: segment's y plus yOffset so it appears on top.
             // - z: exactly the same as the segment's z.
@@ -45,20 +46,22 @@ namespace Segments
             spawnPosition.x = Mathf.Round(spawnPosition.x / 2f) * 2f;
             spawnPosition.z = Mathf.Round(spawnPosition.z / 2f) * 2f;
 
-            fruit = Instantiate(fruitPrefab, spawnPosition, Quaternion.identity);
+            // Use the pool instead of instantiating a new object.
+            string chickTag = chickToPickPrefab.name;
+            chickToPick = ObjectPoolManager.Instance.GetObjectFromPool(chickTag, spawnPosition);
         }
-    
+        
         private void OnDisable()
         {
-            // Return the fruit to the pool if one was spawned.
-            if (fruit != null)
+            // Return the chick to the pool if one was spawned.
+            if (chickToPick != null)
             {
                 // Remove "(Clone)" from the name to match the pool key.
-                string fruitTag = fruit.name.Replace("(Clone)", "").Trim();
-                ObjectPoolManager.Instance.ReturnObjectToPool(fruitTag, fruit);
-                fruit = null;
+                string chickTag = chickToPick.name.Replace("(Clone)", "").Trim();
+                ObjectPoolManager.Instance.ReturnObjectToPool(chickTag, chickToPick);
+                chickToPick = null;
             }
-            fruitSpawned = false;
+            chickToPickSpawned = false;
         }
         // This segment type does not generate additional obstacles.
         public override void GenerateObstacles() { }

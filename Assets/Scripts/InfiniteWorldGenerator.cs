@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Managers;
+using Pools;
 using UnityEngine;
 
 public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
