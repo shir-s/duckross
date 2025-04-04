@@ -1,15 +1,18 @@
-using Pools;
 using UnityEngine;
+using Pools;
 
 namespace Segments
 {
     public class SafeSegment : Segment
     {
         [SerializeField] private GameObject chickToPickPrefab;  // Assign your chick prefab in the Inspector.
-        [SerializeField] private float yOffset = 5f;        // How much above the segment to spawn the chick.
-
+        
+        private float yOffset = 0.5f;        // How much above the segment to spawn the chick.
         private bool chickToPickSpawned = false; // Ensure chick is spawned only once per activation.
         private GameObject chickToPick;
+
+        // Static variable to count how many chick objects have been spawned.
+        public static int ChickSpawnCount { get; private set; } = 0;
 
         private void OnEnable()
         {
@@ -28,7 +31,7 @@ namespace Segments
             chickToPickSpawned = true; // Mark that we've spawned a chick for this activation.
 
             // Get half the segment's width.
-            float halfWidth = GetXLength() * 0.5f;
+            float halfWidth = GetXLength() * 0.3f;
             // Randomize x offset within the segment's width.
             float xOffset = Random.Range(-halfWidth, halfWidth);
 
@@ -43,26 +46,31 @@ namespace Segments
             );
 
             // Force x and z to be multiples of 2.
-            spawnPosition.x = Mathf.Round(spawnPosition.x / 2f) * 2f;
-            spawnPosition.z = Mathf.Round(spawnPosition.z / 2f) * 2f;
+            spawnPosition.x = Mathf.Round((spawnPosition.x) / 2f) * 2f;
+            spawnPosition.z = Mathf.Round((spawnPosition.z) / 2f) * 2f;
 
             // Use the pool instead of instantiating a new object.
             string chickTag = chickToPickPrefab.name;
             chickToPick = ObjectPoolManager.Instance.GetObjectFromPool(chickTag, spawnPosition);
+            if (chickToPick != null)
+            {
+                ChickSpawnCount++;
+            }
         }
-        
+    
         private void OnDisable()
         {
             // Return the chick to the pool if one was spawned.
             if (chickToPick != null)
             {
-                // Remove "(Clone)" from the name to match the pool key.
                 string chickTag = chickToPick.name.Replace("(Clone)", "").Trim();
                 ObjectPoolManager.Instance.ReturnObjectToPool(chickTag, chickToPick);
                 chickToPick = null;
+                ChickSpawnCount--;
             }
             chickToPickSpawned = false;
         }
+
         // This segment type does not generate additional obstacles.
         public override void GenerateObstacles() { }
         public override void ReturnObstacle(GameObject obstacle) { }

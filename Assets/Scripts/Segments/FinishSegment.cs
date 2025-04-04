@@ -10,14 +10,16 @@ namespace Segments
         [SerializeField] private TMPro.TMP_Text chickCountText;
 
         
-        [SerializeField] private int minChicksToPass = 3;
-        [SerializeField] private int maxChicksToPass = 7;
+        private int minChicksToPass = 3;
+        private int maxChicksToPass = 7;
         private int chicksToPass;
 
         private void OnEnable()
         {
+            maxChicksToPass = InfiniteWorldGenerator.safeSegmentCount;
             // Randomly choose a number between minChicksToPass and maxChicksToPass (inclusive)
             chicksToPass = Random.Range(minChicksToPass, maxChicksToPass + 1);
+            chicksToPass = 1;
             if(chickToPassText != null)
                 chickToPassText.text = "Chicks to pass: " + chicksToPass.ToString();
         }
@@ -26,10 +28,10 @@ namespace Segments
         {
             if(other.CompareTag("Player"))
             {
-                Debug.Log("Player entered");
                 // Get the player's current chick count (assumes a static property in PlayerController)
                 int currentChickCount = PlayerController.ChickCount;
                 UpdateChickCountDisplay(currentChickCount);
+                Debug.Log($"CHIKS INFO: {currentChickCount}, {chicksToPass}");
                 if (currentChickCount >= chicksToPass)
                 {
                     EventManager.Instance.TriggerPlayerPassedFinishSegment();

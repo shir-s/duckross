@@ -25,10 +25,11 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         // Reset canPassFinish once the player has moved past the finish trigger point.
-        if (canPassFinish && transform.position.z > finishPassStartZ)
+        if (canPassFinish && transform.position.z > finishPassStartZ + 10 )
         {
             canPassFinish = false;
             Debug.Log("Player moved beyond finish trigger, resetting canPassFinish.");
+            finishPassStartZ = 0;
         }
     
         // If the player is on a finish segment, not allowed to pass, and has moved beyond the saved finish segment z,

@@ -30,6 +30,7 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
 
     // Internal tracking for safe zone spawn.
     private float nextFinishZoneZ;
+    private float prevFinishZoneZ;
 
     // Instead of using player position as our base, we keep track of where the next segment should be placed.
     private float nextSegmentZ;
@@ -42,6 +43,9 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
 
     // Flag to control generator activity.
     private bool isGameActive = false;
+    
+    // Counter for safe segments spawned since the last finish.
+    public static int safeSegmentCount = 0;
 
     void Update()
     {
@@ -53,7 +57,16 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         {
             SpawnSegment();
         }
+    }
 
+    private void HandleChicksPassedFinishSegment()
+    {
+        CleanFarSegments();
+        safeSegmentCount = 0;
+    }
+
+    public void CleanFarSegments()
+    {
         // Remove segments that have fallen too far behind the player.
         if (activeSegments.Count > 0)
         {
@@ -79,7 +92,6 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         
         // 1. Choose the base segment type.
         // 2. Choose a random group count between groupMinCount and groupMaxCount (inclusive).
-
         string chosenTag = "";
         int groupCount = Random.Range(groupMinCount, groupMaxCount + 1);
         List<string> availableTags = new List<string>(segmentTags);
@@ -148,12 +160,10 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         {
             if (x)
             {
-                Debug.Log($"After finish spawn position: {spawnPosition}");
                 x = false;
             }
             else
             {
-                Debug.Log($"Finish spawn position: {spawnPosition}");
                 x = true;
             }
         }
@@ -170,11 +180,13 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
 
     private void OnEnable()
     {
+        // Subscribe to event.
         if (EventManager.Instance != null)
         {
             EventManager.Instance.OnGameStartEvent += HandleGameStart;
             EventManager.Instance.OnGameOverEvent += HandleGameOver;
             EventManager.Instance.OnGameRestartEvent += HandleGameRestart;
+            EventManager.Instance.OnChicksPassedFinishSegment += HandleChicksPassedFinishSegment;
         }
     }
 
