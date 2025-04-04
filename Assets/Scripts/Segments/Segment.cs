@@ -4,7 +4,7 @@ namespace Segments
 {
     public abstract class Segment : MonoBehaviour
     {
-        public abstract void GenerateObstacles();
+        public abstract void GenerateObject();
     
         public float GetZLength()
         {
@@ -27,7 +27,7 @@ namespace Segments
             return bounds.size.x;
         }
 
-        public abstract void ReturnObstacle(GameObject obstacle);
+        public abstract void ReturnOject(GameObject obj);
     }
 }
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Objects;
 using Pools;
 using UnityEngine;
 
@@ -64,7 +65,7 @@ namespace Segments
             {
                 if (obstacle != null)
                 {
-                    ReturnObstacle(obstacle);
+                    ReturnOject(obstacle);
                 }
             }
             spawnedObstacles.Clear();
@@ -76,7 +77,7 @@ namespace Segments
             while (true)
             {
                 yield return new WaitForSeconds(obstacleSpawnInterval);
-                GenerateObstacles();
+                GenerateObject();
             }
         }
 
@@ -95,7 +96,7 @@ namespace Segments
         }
     
         // GenerateObstacles spawns one obstacle using the pool.
-        public override void GenerateObstacles()
+        public override void GenerateObject()
         {
             if (allowedObstaclePrefabs == null || allowedObstaclePrefabs.Count == 0)
             {
@@ -123,7 +124,7 @@ namespace Segments
                 Vector3 obstacleDirection = (spawnDirection == SpawnDirection.Left) ? Vector3.left : Vector3.right;
 
                 // Pass the direction to the obstacle's behavior.
-                ObstacleBehavior behavior = obstacle.GetComponent<ObstacleBehavior>();
+                ObjectBehavior behavior = obstacle.GetComponent<ObjectBehavior>();
                 if (behavior != null)
                 {
                     behavior.Initialize(obstacleDirection, obstacleSpeed, distanceThreshold);
@@ -135,14 +136,14 @@ namespace Segments
         }
     
         // Public method to centralize the return logic.
-        public override void ReturnObstacle(GameObject obstacle)
+        public override void ReturnOject(GameObject obj)
         {
-            string tag = obstacle.name.Replace("(Clone)", "").Trim();
-            if (spawnedObstacles.Contains(obstacle))
+            string tag = obj.name.Replace("(Clone)", "").Trim();
+            if (spawnedObstacles.Contains(obj))
             {
-                spawnedObstacles.Remove(obstacle);
+                spawnedObstacles.Remove(obj);
             }
-            ObjectPoolManager.Instance.ReturnObjectToPool(tag, obstacle);
+            ObjectPoolManager.Instance.ReturnObjectToPool(tag, obj);
         }
     }
 }

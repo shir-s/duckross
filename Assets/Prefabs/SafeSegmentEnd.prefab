@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chickToPickPrefab: {fileID: 6555248622022947617, guid: d53eb5d3066d9ed40a519bce21193749, type: 3}
-  yOffset: 0.5
+  player: {fileID: 0}
 --- !u!65 &3530338578069746801
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -124,8 +124,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chickToPassText: {fileID: 951948164155048794}
   chickCountText: {fileID: 1841478484282811068}
-  minChicksToPass: 3
-  maxChicksToPass: 7
 --- !u!1 &8963525517899459892
 GameObject:
   m_ObjectHideFlags: 0

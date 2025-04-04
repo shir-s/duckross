@@ -22,6 +22,20 @@ public class PlayerController : MonoBehaviour
     private float rightBorder = 10;
     private float leftBorder = -10;
     private float prevFinish = 0;
+    
+    public static PlayerController Instance { get; private set; }
+    
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        // Optionally: DontDestroyOnLoad(gameObject);
+    }
+    
     private void Update()
     {
         // Reset canPassFinish once the player has moved past the finish trigger point.

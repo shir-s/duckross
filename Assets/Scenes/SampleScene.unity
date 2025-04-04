@@ -1336,7 +1336,7 @@ MonoBehaviour:
   groupMinCount: 3
   groupMaxCount: 7
   initialSafeZoneCount: 6
-  finishZoneInterval: 50
+  prevFinishZoneZ: 0
 --- !u!4 &1103920322
 Transform:
   m_ObjectHideFlags: 0

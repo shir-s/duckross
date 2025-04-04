@@ -1,3 +1,4 @@
+using Objects;
 using UnityEngine;
 using Pools;
 
@@ -7,20 +8,33 @@ namespace Segments
     {
         [SerializeField] private GameObject chickToPickPrefab;  // Assign your chick prefab in the Inspector.
         
+        private Transform player;
         private float yOffset = 0.5f;        // How much above the segment to spawn the chick.
         private bool chickToPickSpawned = false; // Ensure chick is spawned only once per activation.
         private GameObject chickToPick;
+        private float distanceFromPlayerToSpawnChick = 15;
 
         // Static variable to count how many chick objects have been spawned.
         public static int ChickSpawnCount { get; private set; } = 0;
 
+        void Update()
+        {
+            if (player.position.z > transform.position.z + distanceFromPlayerToSpawnChick && !chickToPickSpawned)
+            {
+                SpawnChick();
+            }
+        }
+
         private void OnEnable()
         {
-            // Reset flag each time the segment is activated.
-            chickToPickSpawned = false;
+            // Instead of assigning player via Inspector, fetch it via singleton.
+            if (player == null && PlayerController.Instance != null)
+            {
+                player = PlayerController.Instance.gameObject.transform;
+            }
 
-            // With 33% chance, spawn one chick (if not already spawned).
-            if (!chickToPickSpawned && Random.value < 0.33f && transform.position.z > 2)
+            chickToPickSpawned = false;
+            if (!chickToPickSpawned && Random.value < 1f && transform.position.z > 2)
             {
                 SpawnChick();
             }
@@ -54,6 +68,13 @@ namespace Segments
             chickToPick = ObjectPoolManager.Instance.GetObjectFromPool(chickTag, spawnPosition);
             if (chickToPick != null)
             {
+                // Pass the direction to the obstacle's behavior.
+                ChickToSpawn behavior = chickToPick.GetComponent<ChickToSpawn>();
+                if (behavior != null)
+                {
+                    // Set this RoadSegment as the spawner so the obstacle can return itself.
+                    behavior.SetSpawner(this);
+                }
                 ChickSpawnCount++;
             }
         }
@@ -72,7 +93,13 @@ namespace Segments
         }
 
         // This segment type does not generate additional obstacles.
-        public override void GenerateObstacles() { }
-        public override void ReturnObstacle(GameObject obstacle) { }
+        public override void GenerateObject() { }
+
+        public override void ReturnOject(GameObject obj)
+        {
+            string tag = obj.name.Replace("(Clone)", "").Trim();
+            ObjectPoolManager.Instance.ReturnObjectToPool(tag, obj);
+            chickToPickSpawned = false;
+        }
     }
 }
