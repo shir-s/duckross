@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1423278733067871255}
   - component: {fileID: 1622825761531916737}
   - component: {fileID: -5796212562315308734}
+  - component: {fileID: 1694121182372951056}
   m_Layer: 0
   m_Name: Chick
   m_TagString: Chick
@@ -150,3 +151,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1694121182372951056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4076254355018491911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60151e83bf979e7448ec70819b92d337, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

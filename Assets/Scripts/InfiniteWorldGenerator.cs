@@ -72,7 +72,6 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         // First, check if it's time to spawn a safe zone group.
         if (nextSegmentZ >= nextFinishZoneZ && !previousSegmentTag.Equals(safeZoneTag))
         {
-            Debug.Log("Safe Zone Finish");
             SpawnFinishZoneGroup();
             nextFinishZoneZ += finishZoneInterval;
             return;

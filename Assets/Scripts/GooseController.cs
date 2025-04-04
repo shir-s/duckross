@@ -75,8 +75,7 @@ public class GooseController : MonoBehaviour
     // When the goose collides with something.
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Goose collided with: " + other.gameObject.name);
-        if (other.CompareTag("Fruit"))
+        if (other.CompareTag("ChickToPick"))
         {
             // When colliding with a fruit, add a chick from the pool.
             AddChick();

@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72310155dfbaa6c4caa905af8ebe75df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chickPrefab: {fileID: 6555248622022947617, guid: d53eb5d3066d9ed40a519bce21193749, type: 3}
+  chickToPickPrefab: {fileID: 6555248622022947617, guid: d53eb5d3066d9ed40a519bce21193749, type: 3}
   yOffset: 0.5
 --- !u!65 &3530338578069746801
 BoxCollider:
