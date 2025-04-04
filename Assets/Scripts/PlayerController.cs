@@ -19,7 +19,9 @@ public class PlayerController : MonoBehaviour
     private bool onFinishSegment = false;
     private bool canPassFinish = false;
     private float finishPassStartZ = 0;
-
+    private float rightBorder = 10;
+    private float leftBorder = -10;
+    
     private void Update()
     {
         // Reset canPassFinish once the player has moved past the finish trigger point.
@@ -35,7 +37,17 @@ public class PlayerController : MonoBehaviour
         {
             // Push the player backward along z (adjust the magnitude as needed).
             transform.position += new Vector3(0, 0, -1f);
-            Debug.Log("Player bush off triggered.");
+            Debug.Log("Player bush off triggered. (FINISH)");
+        }
+        if (transform.position.x > rightBorder)
+        {
+            transform.position += new Vector3(-1f, 0, 0);
+            Debug.Log("Player bush off triggered. (RIGHT)");
+        }
+        if (transform.position.x < leftBorder)
+        {
+            transform.position += new Vector3(1f, 0, 0);
+            Debug.Log("Player bush off triggered. (LEFT)");
         }
     
         // Existing jump logic...

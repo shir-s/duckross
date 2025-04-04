@@ -22,7 +22,7 @@ TagManager:
   - SafeSegmentMid
   - SafeSegmentEnd
   - SafeSegmentFinish
-  - ChickToPick
+  - Border
   layers:
   - Default
   - TransparentFX
@@ -30,8 +30,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Border
+  - Player
   - 
   - 
   - 
