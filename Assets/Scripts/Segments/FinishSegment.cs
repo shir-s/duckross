@@ -14,14 +14,18 @@ namespace Segments
         private int maxChicksToPass = 7;
         private int chicksToPass;
 
-        private void OnEnable()
+        public void Initialize(int chicksSpawned)
         {
-            maxChicksToPass = InfiniteWorldGenerator.safeSegmentCount;
+            maxChicksToPass = (int)(chicksSpawned * 0.7f);
             // Randomly choose a number between minChicksToPass and maxChicksToPass (inclusive)
             chicksToPass = Random.Range(minChicksToPass, maxChicksToPass + 1);
-            chicksToPass = 1;
             if(chickToPassText != null)
                 chickToPassText.text = "Chicks to pass: " + chicksToPass.ToString();
+        }
+        
+        private void OnEnable()
+        {
+
         }
 
         private void OnTriggerEnter(Collider other)

@@ -1,19 +1,22 @@
 using UnityEngine;
 
-public class ChickController : MonoBehaviour
+namespace Objects
 {
-    private PlayerController _player;
-
-    private void Start()
+    public class ChickController : MonoBehaviour
     {
-        _player = FindObjectOfType<PlayerController>();
-    }
+        private PlayerController _player;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Car") || other.CompareTag("Truck"))
+        private void Start()
         {
-            _player.ReturnChicksFromIndex(gameObject);
+            _player = FindObjectOfType<PlayerController>();
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Car") || other.CompareTag("Truck"))
+            {
+                _player.ReturnChicksFromIndex(gameObject);
+            }
         }
     }
 }

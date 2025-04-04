@@ -45,11 +45,10 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
     // Flag to control generator activity.
     private bool isGameActive = false;
     
-    // Counter for safe segments spawned since the last finish.
-    public static int safeSegmentCount = 0;
-    
     // List to store finish segments.
     private List<GameObject> finishSegments = new List<GameObject>();
+    
+    private int countSafeSegments = 0;
 
     void Update()
     {
@@ -149,7 +148,10 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
     // Helper method to spawn a single segment with the given tag.
     private void SpawnSingleSegment(string tag)
     {
-        
+        if (tag.StartsWith("SafeSegment"))
+        {
+            countSafeSegments++;
+        }
         // Position the new segment relative to the player's x position.
         Vector3 spawnPosition = new Vector3(player.transform.position.x, 0, nextSegmentZ);
         GameObject newSegment = poolManager.GetSegmentFromPool(tag, spawnPosition, Quaternion.identity);
@@ -165,6 +167,12 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
             if (tag.EndsWith("Finish"))
             {
                 finishSegments.Add(newSegment);
+                FinishSegment behavior = newSegment.GetComponent<FinishSegment>();
+                if (behavior != null)
+                {
+                    behavior.Initialize(countSafeSegments);
+                    countSafeSegments = 0;
+                }
             }
         }
     }
@@ -217,7 +225,6 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         nextFinishZoneZ = worldStartZ + finishZoneInterval;
         previousSegmentTag = "";
         activeSegments.Clear();
-        safeSegmentCount = 0;
 
         // Reactivate the player.
         if (player != null)

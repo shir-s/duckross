@@ -1326,9 +1326,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poolManager: {fileID: 134957694}
   player: {fileID: 1601100743}
-  spawnDistanceAhead: 50
+  spawnDistanceAhead: 30
   destroyDistanceBehind: 20
-  initialSegmentCount: 60
+  initialSegmentCount: 30
   segmentTags:
   - RoadSegment
   - SafeSegment

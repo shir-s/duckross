@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Objects;
 using Pools;
 using UnityEngine;
 
@@ -22,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private float rightBorder = 10;
     private float leftBorder = -10;
     private float prevFinish = 0;
+    private Vector3 prevDirection = Vector3.zero;
     
     public static PlayerController Instance { get; private set; }
     
@@ -78,8 +80,19 @@ public class PlayerController : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.RightArrow))
                 jumpDirection = Vector3.right;
 
-            if (jumpDirection != Vector3.zero)
+            if (jumpDirection != Vector3.zero && jumpDirection != -prevDirection)
             {
+                if (jumpDirection == Vector3.forward)
+                    transform.rotation = Quaternion.Euler(90, 0, 0);
+                else if (jumpDirection == Vector3.back)
+                    transform.rotation = Quaternion.Euler(90, 180, 0);
+                else if (jumpDirection == Vector3.left)
+                    transform.rotation = Quaternion.Euler(90, -90, 0);
+                else if (jumpDirection == Vector3.right)
+                    transform.rotation = Quaternion.Euler(90, 90, 0);
+                
+                prevDirection = jumpDirection;
+                
                 StartCoroutine(Jump(jumpDirection));
             }
         }
@@ -113,6 +126,17 @@ public class PlayerController : MonoBehaviour
             if (i + 1 < previousPositions.Count)
             {
                 chicks[i].transform.position = previousPositions[i + 1];
+                
+                // Calculate the direction the chick should look toward (from its current position to its previous position)
+                Vector3 direction = previousPositions[i] - previousPositions[i + 1];
+                if(direction != Vector3.zero)
+                {
+                    // Create a rotation that looks in that direction.
+                    Quaternion lookRotation = Quaternion.LookRotation(direction);
+                    // Adjust the rotation by the constant offset (around the Y axis, for example).
+                    Quaternion adjustedRotation = lookRotation * Quaternion.Euler(90, 0, 0);
+                    chicks[i].transform.rotation = adjustedRotation;
+                }
             }
         }
     }
