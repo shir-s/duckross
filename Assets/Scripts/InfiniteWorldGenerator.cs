@@ -46,6 +46,9 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
     
     // Counter for safe segments spawned since the last finish.
     public static int safeSegmentCount = 0;
+    
+    // List to store finish segments.
+    private List<GameObject> finishSegments = new List<GameObject>();
 
     void Update()
     {
@@ -57,21 +60,15 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         {
             SpawnSegment();
         }
-    }
-
-    private void HandleChicksPassedFinishSegment()
-    {
-        CleanFarSegments();
-        safeSegmentCount = 0;
-    }
-
-    public void CleanFarSegments()
-    {
-        // Remove segments that have fallen too far behind the player.
+        
+        // Remove segments that have fallen too far behind the player,
+        // but do NOT remove segments that are after (or at) the last finish zone.
         if (activeSegments.Count > 0)
         {
             GameObject oldestSegment = activeSegments.Peek();
-            if (player.position.z - oldestSegment.transform.position.z > destroyDistanceBehind)
+            // Only delete if segment is far behind AND its z is less than the prevFinishZoneZ.
+            if (oldestSegment.transform.position.z < prevFinishZoneZ &&
+                player.position.z - oldestSegment.transform.position.z > destroyDistanceBehind)
             {
                 string tag = oldestSegment.name.Replace("(Clone)", "").Trim();
                 poolManager.ReturnSegmentToPool(tag, oldestSegment);
@@ -86,7 +83,6 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         if (nextSegmentZ >= nextFinishZoneZ && !previousSegmentTag.Equals(safeZoneTag))
         {
             SpawnFinishZoneGroup();
-            nextFinishZoneZ += finishZoneInterval;
             return;
         }
         
@@ -140,7 +136,6 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
     // Spawns the safe zone group.
     void SpawnFinishZoneGroup()
     {
-        Debug.Log($"Spawning finish zone group with tag: {safeZoneTag}");
         // Safe zone group always consists of three segments:
         // SafeSegmentStart, SafeSegmentFinish, SafeSegmentEnd.
         SpawnSingleSegment(safeZoneTag + "Start");
@@ -149,44 +144,41 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         previousSegmentTag = safeZoneTag;
     }
 
-    private bool x;
     // Helper method to spawn a single segment with the given tag.
     private void SpawnSingleSegment(string tag)
     {
         
         // Position the new segment relative to the player's x position.
         Vector3 spawnPosition = new Vector3(player.transform.position.x, 0, nextSegmentZ);
-        if (tag.EndsWith("Finish") || x)
-        {
-            if (x)
-            {
-                x = false;
-            }
-            else
-            {
-                x = true;
-            }
-        }
-        
         GameObject newSegment = poolManager.GetSegmentFromPool(tag, spawnPosition, Quaternion.identity);
+        
         if (newSegment != null)
         {
             activeSegments.Enqueue(newSegment);
             Segment seg = newSegment.GetComponent<Segment>();
             float zLength = seg != null ? seg.GetZLength() : 2f;
             nextSegmentZ += zLength;
+            
+            // If this is a finish segment, add it to the finishSegments list.
+            if (tag.EndsWith("Finish"))
+            {
+                finishSegments.Add(newSegment);
+            }
         }
     }
 
-    private void OnEnable()
+    // This event handler updates the finish zone boundaries.
+    // When triggered, it sets prevFinishZoneZ to nextFinishZoneZ,
+    // and then updates nextFinishZoneZ to the z coordinate of the oldest finish segment in the list.
+    private void HandleChicksPassedFinishSegment()
     {
-        // Subscribe to event.
-        if (EventManager.Instance != null)
+        prevFinishZoneZ = nextFinishZoneZ;
+        if (finishSegments.Count > 0)
         {
-            EventManager.Instance.OnGameStartEvent += HandleGameStart;
-            EventManager.Instance.OnGameOverEvent += HandleGameOver;
-            EventManager.Instance.OnGameRestartEvent += HandleGameRestart;
-            EventManager.Instance.OnChicksPassedFinishSegment += HandleChicksPassedFinishSegment;
+            // Assume the oldest finish segment is the first in the list.
+            nextFinishZoneZ = finishSegments[0].transform.position.z;
+            // Optionally, remove it from the list if you want to update once.
+            finishSegments.RemoveAt(0);
         }
     }
 
@@ -215,13 +207,14 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
 
     public void HandleGameStart()
     {
-        Debug.Log("Game started");
         isGameActive = true;
         // Reset generator state.
         nextSegmentZ = worldStartZ;
+        prevFinishZoneZ = worldStartZ; // No finish yet.
         nextFinishZoneZ = worldStartZ + finishZoneInterval;
         previousSegmentTag = "";
         activeSegments.Clear();
+        safeSegmentCount = 0;
 
         // Reactivate the player.
         if (player != null)
@@ -248,6 +241,19 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         SpawnSingleSegment(safeZoneTag+"End");
         previousSegmentTag = safeZoneTag;
     }
+    
+    
+    private void OnEnable()
+    {
+        // Subscribe to event.
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.OnGameStartEvent += HandleGameStart;
+            EventManager.Instance.OnGameOverEvent += HandleGameOver;
+            EventManager.Instance.OnGameRestartEvent += HandleGameRestart;
+            EventManager.Instance.OnChicksPassedFinishSegment += HandleChicksPassedFinishSegment;
+        }
+    }
 
     private void OnDisable()
     {
@@ -256,6 +262,7 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
             EventManager.Instance.OnGameStartEvent -= HandleGameStart;
             EventManager.Instance.OnGameOverEvent -= HandleGameOver;
             EventManager.Instance.OnGameRestartEvent -= HandleGameRestart;
+            EventManager.Instance.OnChicksPassedFinishSegment -= HandleChicksPassedFinishSegment;
         }
     }
 }

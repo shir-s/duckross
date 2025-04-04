@@ -31,7 +31,6 @@ namespace Segments
                 // Get the player's current chick count (assumes a static property in PlayerController)
                 int currentChickCount = PlayerController.ChickCount;
                 UpdateChickCountDisplay(currentChickCount);
-                Debug.Log($"CHIKS INFO: {currentChickCount}, {chicksToPass}");
                 if (currentChickCount >= chicksToPass)
                 {
                     EventManager.Instance.TriggerPlayerPassedFinishSegment();
@@ -42,7 +41,6 @@ namespace Segments
         private void UpdateChickCountDisplay(int count)
         {
             if(chickCountText != null)
-                Debug.Log("Updating chick count display");
                 chickCountText.text = "Chicks number: " + count.ToString();
         }
     }

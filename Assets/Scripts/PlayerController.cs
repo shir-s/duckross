@@ -28,7 +28,6 @@ public class PlayerController : MonoBehaviour
         if (canPassFinish && transform.position.z > finishPassStartZ + 10 )
         {
             canPassFinish = false;
-            Debug.Log("Player moved beyond finish trigger, resetting canPassFinish.");
             finishPassStartZ = 0;
         }
     
@@ -38,17 +37,14 @@ public class PlayerController : MonoBehaviour
         {
             // Push the player backward along z (adjust the magnitude as needed).
             transform.position += new Vector3(0, 0, -1f);
-            Debug.Log("Player bush off triggered. (FINISH)");
         }
         if (transform.position.x > rightBorder)
         {
             transform.position += new Vector3(-1f, 0, 0);
-            Debug.Log("Player bush off triggered. (RIGHT)");
         }
         if (transform.position.x < leftBorder)
         {
             transform.position += new Vector3(1f, 0, 0);
-            Debug.Log("Player bush off triggered. (LEFT)");
         }
     
         // Existing jump logic...
@@ -118,7 +114,6 @@ public class PlayerController : MonoBehaviour
             onFinishSegment = true;
             // Save the finish segment's z coordinate from the collided object.
             finishPassStartZ = other.transform.position.z;
-            Debug.Log("Player collided with SafeSegmentFinish. Saved finish segment z: " + finishPassStartZ);
             if (!canPassFinish)
             {
                 Debug.Log("Cannot pass finish yet.");
@@ -194,7 +189,6 @@ public class PlayerController : MonoBehaviour
         // When enough chicks have passed the finish segment, set canPassFinish true and store current z.
         canPassFinish = true;
         finishPassStartZ = transform.position.z;
-        Debug.Log("Chicks passed finish segment. canPassFinish set to true.");
     }
 
     private void GameOver()

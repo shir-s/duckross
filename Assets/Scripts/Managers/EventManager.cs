@@ -37,7 +37,6 @@ public class EventManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        Debug.Log("EventManager: Game is starting...");
         GameStarted = true;
         GameOver = false;
         isRestarting = false;
@@ -50,7 +49,6 @@ public class EventManager : MonoBehaviour
     /// </summary>
     public void EndGame()
     {
-        Debug.Log("EventManager: Game is over!");
         GameOver = true;
         GameStarted = false;
         TriggerGameOver();
@@ -74,19 +72,16 @@ public class EventManager : MonoBehaviour
 
     private void TriggerGameStart()
     {
-        Debug.Log("EventManager: Triggering Game Start event");
         OnGameStartEvent?.Invoke();
     }
 
     private void TriggerGameOver()
     {
-        Debug.Log("EventManager: Triggering Game Over event");
         OnGameOverEvent?.Invoke();
     }
 
     private void TriggerGameRestart()
     {
-        Debug.Log("EventManager: Triggering Game Restart event");
         OnGameRestartEvent?.Invoke();
     }
     
@@ -98,7 +93,6 @@ public class EventManager : MonoBehaviour
     // Trigger method for when enough chicks have passed the finish segment.
     public void TriggerPlayerPassedFinishSegment()
     {
-        Debug.Log("EventManager: Triggering Chicks Passed Finish Segment event");
         OnChicksPassedFinishSegment?.Invoke();
     }
 }
