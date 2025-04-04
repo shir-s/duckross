@@ -30,7 +30,7 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
 
     // Internal tracking for safe zone spawn.
     private float nextFinishZoneZ;
-    private float prevFinishZoneZ;
+    public float prevFinishZoneZ;
 
     // Instead of using player position as our base, we keep track of where the next segment should be placed.
     private float nextSegmentZ;

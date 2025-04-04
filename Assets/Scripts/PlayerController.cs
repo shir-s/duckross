@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     private float finishPassStartZ = 0;
     private float rightBorder = 10;
     private float leftBorder = -10;
-    
+    private float prevFinish = 0;
     private void Update()
     {
         // Reset canPassFinish once the player has moved past the finish trigger point.
@@ -37,6 +37,10 @@ public class PlayerController : MonoBehaviour
         {
             // Push the player backward along z (adjust the magnitude as needed).
             transform.position += new Vector3(0, 0, -1f);
+        }
+        if (transform.position.z < prevFinish)
+        {
+            transform.position += new Vector3(0, 0, 1f);
         }
         if (transform.position.x > rightBorder)
         {
@@ -189,6 +193,7 @@ public class PlayerController : MonoBehaviour
         // When enough chicks have passed the finish segment, set canPassFinish true and store current z.
         canPassFinish = true;
         finishPassStartZ = transform.position.z;
+        prevFinish = transform.position.z;
     }
 
     private void GameOver()
