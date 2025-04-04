@@ -1,3 +1,4 @@
+using Segments;
 using UnityEngine;
 
 public class ObstacleBehavior : MonoBehaviour

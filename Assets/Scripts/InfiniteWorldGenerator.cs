@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Managers;
 using Pools;
+using Segments;
 using UnityEngine;
 
 public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
@@ -38,7 +39,6 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
 
     // Counters to track segment types (for non-safe segments).
     private string previousSegmentTag = "";
-    private bool firstSegment;
 
     // Flag to control generator activity.
     private bool isGameActive = false;
@@ -137,21 +137,33 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         previousSegmentTag = safeZoneTag;
     }
 
+    private bool x;
     // Helper method to spawn a single segment with the given tag.
     private void SpawnSingleSegment(string tag)
     {
-        if (tag.EndsWith("Finish"))
-        {
-            Debug.Log("Spawning finish zone with tag: " + tag);
-        }
+        
         // Position the new segment relative to the player's x position.
         Vector3 spawnPosition = new Vector3(player.transform.position.x, 0, nextSegmentZ);
+        if (tag.EndsWith("Finish") || x)
+        {
+            if (x)
+            {
+                Debug.Log($"After finish spawn position: {spawnPosition}");
+                x = false;
+            }
+            else
+            {
+                Debug.Log($"Finish spawn position: {spawnPosition}");
+                x = true;
+            }
+        }
+        
         GameObject newSegment = poolManager.GetSegmentFromPool(tag, spawnPosition, Quaternion.identity);
         if (newSegment != null)
         {
             activeSegments.Enqueue(newSegment);
             Segment seg = newSegment.GetComponent<Segment>();
-            float zLength = seg != null ? seg.GetZLength() : 10f;
+            float zLength = seg != null ? seg.GetZLength() : 2f;
             nextSegmentZ += zLength;
         }
     }
@@ -193,11 +205,9 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
     {
         Debug.Log("Game started");
         isGameActive = true;
-
         // Reset generator state.
         nextSegmentZ = worldStartZ;
         nextFinishZoneZ = worldStartZ + finishZoneInterval;
-        firstSegment = true;
         previousSegmentTag = "";
         activeSegments.Clear();
 

@@ -2,18 +2,18 @@ using UnityEngine;
 
 public class ChickController : MonoBehaviour
 {
-    private GooseController _goose;
+    private PlayerController _player;
 
     private void Start()
     {
-        _goose = FindObjectOfType<GooseController>();
+        _player = FindObjectOfType<PlayerController>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Car") || other.CompareTag("Truck"))
         {
-            _goose.ReturnChicksFromIndex(gameObject);
+            _player.ReturnChicksFromIndex(gameObject);
         }
     }
 }

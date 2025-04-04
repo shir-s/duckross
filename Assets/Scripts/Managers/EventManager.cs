@@ -16,6 +16,9 @@ public class EventManager : MonoBehaviour
     public event Action OnGameOverEvent;
     public event Action OnGameRestartEvent;
     public event Action OnMainMenuEvent;
+    
+    // Invoked when the number of chicks following the player is sufficient to pass the finish segment.
+    public event Action OnChicksPassedFinishSegment;
 
     private void Awake()
     {
@@ -26,8 +29,7 @@ public class EventManager : MonoBehaviour
             return;
         }
         Instance = this;
-        // Optionally, uncomment the following line if you want this object to persist across scenes.
-        // DontDestroyOnLoad(gameObject);
+        // Optionally: DontDestroyOnLoad(gameObject);
     }
 
     /// <summary>
@@ -40,7 +42,7 @@ public class EventManager : MonoBehaviour
         GameOver = false;
         isRestarting = false;
         TriggerGameStart();
-        // Additional game-start logic can be added here (e.g., scene transitions).
+        // Additional game-start logic can be added here.
     }
 
     /// <summary>
@@ -91,5 +93,12 @@ public class EventManager : MonoBehaviour
     private void TriggerMainMenu()
     {
         OnMainMenuEvent?.Invoke();
+    }
+
+    // Trigger method for when enough chicks have passed the finish segment.
+    public void TriggerPlayerPassedFinishSegment()
+    {
+        Debug.Log("EventManager: Triggering Chicks Passed Finish Segment event");
+        OnChicksPassedFinishSegment?.Invoke();
     }
 }

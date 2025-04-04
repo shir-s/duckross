@@ -12,9 +12,6 @@ namespace Segments
         // List of allowed obstacle prefabs for this segment (e.g., Car, Truck, etc.)
         [SerializeField] private List<GameObject> allowedObstaclePrefabs;
 
-        // Base max spawn interval used for delaying obstacle generation.
-        private float spawnInterval = 4f;
-
         // Chosen spawn direction for obstacles.
         private SpawnDirection spawnDirection;
 
@@ -30,13 +27,9 @@ namespace Segments
         private float obstacleSpeed;
 
         private float distanceThreshold;
-        private float obstacleXThreshold = 10f;  // Distance offset from player's x position.
     
         // List to track all obstacles spawned by this segment.
         private List<GameObject> spawnedObstacles = new List<GameObject>();
-    
-        // Maximum obstacles allowed in the initial fill (safety cap).
-        [SerializeField] private int maxInitialObstacles = 50;
     
 
         private void OnEnable()
