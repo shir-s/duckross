@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5982261915236894674}
   m_Layer: 0
   m_Name: ChickToPick
-  m_TagString: ChickToTake
+  m_TagString: ChickToPick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

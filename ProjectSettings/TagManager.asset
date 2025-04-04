@@ -23,6 +23,7 @@ TagManager:
   - SafeSegmentEnd
   - SafeSegmentFinish
   - Border
+  - ChickToPick
   layers:
   - Default
   - TransparentFX
