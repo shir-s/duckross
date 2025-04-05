@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Managers;
 using Objects;
 using Pools;
 using UnityEngine;
@@ -17,13 +18,12 @@ public class PlayerController : MonoBehaviour
     private List<Vector3> previousPositions = new List<Vector3>();
 
     // New variables for finish segment logic.
-    private bool onFinishSegment = false;
     private bool canPassFinish = false;
     private float finishPassStartZ = 0;
     private float rightBorder = 10;
     private float leftBorder = -10;
     private float prevFinish = 0;
-    private Vector3 prevDirection = Vector3.zero;
+    private Vector3 prevDirection = Vector3.forward;
     
     public static PlayerController Instance { get; private set; }
     
@@ -71,17 +71,26 @@ public class PlayerController : MonoBehaviour
         if (!isJumping)
         {
             Vector3 jumpDirection = Vector3.zero;
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+        
+            // Use arrow keys or WASD for directional input.
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
                 jumpDirection = Vector3.forward;
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
                 jumpDirection = Vector3.back;
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
                 jumpDirection = Vector3.left;
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
                 jumpDirection = Vector3.right;
+            // Space jumps in the last direction if available.
+            else if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (prevDirection != Vector3.zero)
+                    jumpDirection = prevDirection;
+            }
 
             if (jumpDirection != Vector3.zero && jumpDirection != -prevDirection)
             {
+                // Update rotation based on the new direction.
                 if (jumpDirection == Vector3.forward)
                     transform.rotation = Quaternion.Euler(90, 0, 0);
                 else if (jumpDirection == Vector3.back)
@@ -90,9 +99,8 @@ public class PlayerController : MonoBehaviour
                     transform.rotation = Quaternion.Euler(90, -90, 0);
                 else if (jumpDirection == Vector3.right)
                     transform.rotation = Quaternion.Euler(90, 90, 0);
-                
+
                 prevDirection = jumpDirection;
-                
                 StartCoroutine(Jump(jumpDirection));
             }
         }
@@ -147,27 +155,18 @@ public class PlayerController : MonoBehaviour
         {
             AddChick();
         }
-        else if (other.CompareTag("Car") || other.CompareTag("Truck"))
+        else if (other.CompareTag("Obstacle1") || other.CompareTag("Obstacle2"))
         {
             HandleCollision();
         }
         else if (other.CompareTag("SafeSegmentFinish"))
         {
-            onFinishSegment = true;
             // Save the finish segment's z coordinate from the collided object.
             finishPassStartZ = other.transform.position.z;
             if (!canPassFinish)
             {
                 Debug.Log("Cannot pass finish yet.");
             }
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("SafeSegmentFinish"))
-        {
-            onFinishSegment = false;
         }
     }
 
@@ -185,13 +184,13 @@ public class PlayerController : MonoBehaviour
 
     private void HandleCollision()
     {
-        if (chicks.Count > 0)
-            ReturnChicksFromIndex(chicks[0]);
-        else
-            GameOver();
+        /*if (chicks.Count > 0)
+            ReturnChicksFromChick(chicks[0]);
+        else*/
+        GameOver();
     }
 
-    public void ReturnChicksFromIndex(GameObject hitChick)
+    public void ReturnChicksFromChick(GameObject hitChick)
     {
         int hitIndex = chicks.IndexOf(hitChick);
         if (hitIndex == -1) return;
@@ -205,17 +204,28 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
+        // Subscribe to event.
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.OnGameStartEvent += HandleGameStart;
+            EventManager.Instance.OnChicksPassedFinishSegment += HandleChicksPassedFinishSegment;
+        }
+    }
+
+    private void HandleGameStart()
+    {
         isJumping = false;
         transform.position = startPosition;
         targetPosition = transform.position;
         previousPositions.Clear();
         previousPositions.Add(transform.position);
+        finishPassStartZ = 0;
+        canPassFinish = false;
+        prevFinish = 0;
+        prevDirection = Vector3.forward;
 
-        // Subscribe to event.
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.OnChicksPassedFinishSegment += HandleChicksPassedFinishSegment;
-        }
+        if (chicks.Count > 0)
+            ReturnChicksFromChick(chicks[0]);
     }
 
     private void OnDisable()
@@ -226,16 +236,23 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void HandleChicksPassedFinishSegment()
+    private void HandleChicksPassedFinishSegment(int requiredChicks)
     {
-        // When enough chicks have passed the finish segment, set canPassFinish true and store current z.
-        canPassFinish = true;
-        finishPassStartZ = transform.position.z;
-        prevFinish = transform.position.z;
+        Debug.Log($"HandleChicksPassedFinishSegment {requiredChicks}");
+        if (prevFinish + 10 < transform.position.z)
+        {
+            // When enough chicks have passed the finish segment, set canPassFinish true and store current z.
+            canPassFinish = true;
+            finishPassStartZ = transform.position.z;
+            prevFinish = transform.position.z;
+            ReturnChicksFromChick(chicks[^requiredChicks]);
+        }
     }
 
     private void GameOver()
     {
+        if (chicks.Count > 0)
+            ReturnChicksFromChick(chicks[0]);
         EventManager.Instance.EndGame();
     }
 }

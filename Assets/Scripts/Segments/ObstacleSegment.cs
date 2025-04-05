@@ -6,61 +6,64 @@ using UnityEngine;
 
 namespace Segments
 {
-    public enum SpawnDirection { Left, Right }
 
-    public class RoadSegment : Segment
+    public class ObstacleSegment : Segment
     {
-        // List of allowed obstacle prefabs for this segment (e.g., Car, Truck, etc.)
+        private enum SpawnDirection { Left, Right }
+
+        // List of allowed obstacle prefabs (cars/trucks, logs/boats, etc.).
         [SerializeField] private List<GameObject> allowedObstaclePrefabs;
 
-        // Chosen spawn direction for obstacles.
+        // Chosen spawn direction.
         private SpawnDirection spawnDirection;
 
-        // Reference to the Coroutine so it can be stopped later.
+        // Coroutine reference.
         private Coroutine spawnCoroutine;
         private GameObject obstaclePrefab;
-        private float obstacleSpawnMinInterval = 2f;
-        private float obstacleSpawnMaxInterval = 6f;
+        [SerializeField] private float obstacleSpawnMinInterval = 2f;
+        [SerializeField] private float obstacleSpawnMaxInterval = 6f;
         private float obstacleSpawnInterval;
 
-        private float obstacleSpeedMin = 1;
-        private float obstacleSpeedMax = 3;
+        [SerializeField] private float obstacleSpeedMin = 1f;
+        [SerializeField] private float obstacleSpeedMax = 3f;
         private float obstacleSpeed;
 
         private float distanceThreshold;
     
-        // List to track all obstacles spawned by this segment.
+        // List to track all spawned obstacles.
         private List<GameObject> spawnedObstacles = new List<GameObject>();
-    
 
         private void OnEnable()
         {
-            // Set obstacle speed and distance threshold.
+            // Set obstacle speed and threshold.
             obstacleSpeed = Random.Range(obstacleSpeedMin, obstacleSpeedMax);
             distanceThreshold = transform.localScale.x * 3;
-        
-            // Choose a random spawn direction.
+
+            // Choose spawn direction.
             spawnDirection = (Random.value < 0.5f) ? SpawnDirection.Left : SpawnDirection.Right;
 
-            // Randomly choose one obstacle prefab from the list.
+            // Randomly choose an obstacle prefab from the list.
             int index = Random.Range(0, allowedObstaclePrefabs.Count);
             obstaclePrefab = allowedObstaclePrefabs[index];
-            obstacleSpawnInterval = Random.Range(obstacleSpawnMinInterval, obstacleSpawnMaxInterval);
-            
-            // Start the regular spawning coroutine.
+
+            // Calculate spawn interval based on obstacle speed.
+            obstacleSpawnInterval = Mathf.Lerp(obstacleSpawnMinInterval, obstacleSpawnMaxInterval,
+                (obstacleSpeed - obstacleSpeedMin) / (obstacleSpeedMax - obstacleSpeedMin));
+
+            // Start spawning obstacles.
             spawnCoroutine = StartCoroutine(SpawnObstaclesRoutine());
         }
     
         private void OnDisable()
         {
-            // Stop spawning obstacles.
+            // Stop the spawn coroutine.
             if (spawnCoroutine != null)
             {
                 StopCoroutine(spawnCoroutine);
                 spawnCoroutine = null;
             }
     
-            // Iterate over a copy of the list to safely return obstacles.
+            // Return all spawned obstacles.
             foreach (GameObject obstacle in new List<GameObject>(spawnedObstacles))
             {
                 if (obstacle != null)
@@ -70,8 +73,8 @@ namespace Segments
             }
             spawnedObstacles.Clear();
         }
-
-        // Coroutine that spawns obstacles repeatedly.
+    
+        // Spawning coroutine.
         private IEnumerator SpawnObstaclesRoutine()
         {
             while (true)
@@ -80,8 +83,8 @@ namespace Segments
                 GenerateObject();
             }
         }
-
-        // Helper method to calculate the top Y value of the segment.
+    
+        // Calculate top Y of the segment.
         private float GetTopY()
         {
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
@@ -95,16 +98,16 @@ namespace Segments
             return topY;
         }
     
-        // GenerateObstacles spawns one obstacle using the pool.
+        // Generates one obstacle from the pool.
         public override void GenerateObject()
         {
             if (allowedObstaclePrefabs == null || allowedObstaclePrefabs.Count == 0)
             {
-                Debug.LogWarning("No obstacle prefabs assigned for this RoadSegment.");
+                Debug.LogWarning("No obstacle prefabs assigned for this segment.");
                 return;
             }
 
-            // Calculate the spawn position.
+            // Calculate spawn position.
             Vector3 spawnPosition = transform.position;
             float xLength = GetXLength();
             float xOffset = xLength * 0.5f;
@@ -114,28 +117,23 @@ namespace Segments
                 spawnPosition.x += (xOffset - 2);
             spawnPosition.y = GetTopY() + 0.35f;
 
-            // Use the pool to retrieve the obstacle.
+            // Retrieve the obstacle from the pool.
             string obstacleTag = obstaclePrefab.name;
             GameObject obstacle = ObjectPoolManager.Instance.GetObjectFromPool(obstacleTag, spawnPosition);
-
             if (obstacle != null)
             {
-                // Determine movement direction.
                 Vector3 obstacleDirection = (spawnDirection == SpawnDirection.Left) ? Vector3.left : Vector3.right;
-
-                // Pass the direction to the obstacle's behavior.
                 ObjectBehavior behavior = obstacle.GetComponent<ObjectBehavior>();
                 if (behavior != null)
                 {
                     behavior.Initialize(obstacleDirection, obstacleSpeed, distanceThreshold);
-                    // Set this RoadSegment as the spawner so the obstacle can return itself.
                     behavior.SetSpawner(this);
                 }
                 spawnedObstacles.Add(obstacle);
             }
         }
     
-        // Public method to centralize the return logic.
+        // Returns an object to the pool.
         public override void ReturnOject(GameObject obj)
         {
             string tag = obj.name.Replace("(Clone)", "").Trim();

@@ -152,8 +152,8 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         {
             countSafeSegments++;
         }
-        // Position the new segment relative to the player's x position.
-        Vector3 spawnPosition = new Vector3(player.transform.position.x, 0, nextSegmentZ);
+        // Position the new segment.
+        Vector3 spawnPosition = new Vector3(0, 0, nextSegmentZ);
         GameObject newSegment = poolManager.GetSegmentFromPool(tag, spawnPosition, Quaternion.identity);
         
         if (newSegment != null)
@@ -180,7 +180,7 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
     // This event handler updates the finish zone boundaries.
     // When triggered, it sets prevFinishZoneZ to nextFinishZoneZ,
     // and then updates nextFinishZoneZ to the z coordinate of the oldest finish segment in the list.
-    private void HandleChicksPassedFinishSegment()
+    private void HandleChicksPassedFinishSegment(int requiredChicks)
     {
         prevFinishZoneZ = nextFinishZoneZ;
         if (finishSegments.Count > 0)

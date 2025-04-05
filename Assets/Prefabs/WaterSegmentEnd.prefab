@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 5004510622550050449}
   - component: {fileID: 2671248671380587519}
   - component: {fileID: -2701078902192888759}
-  - component: {fileID: 79485374347808363}
+  - component: {fileID: 2247603542414296248}
   m_Layer: 0
-  m_Name: RoadSegmentStart
-  m_TagString: RoadSegmentStart
+  m_Name: WaterSegmentEnd
+  m_TagString: WaterSegmentEnd
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9f6f1ebfd5cee084a9375d67515a1593, type: 2}
+  - {fileID: 2100000, guid: 9e9f031164682ea46ae3558210dea491, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -109,7 +109,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &79485374347808363
+--- !u!114 &2247603542414296248
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,8 +122,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allowedObstaclePrefabs:
-  - {fileID: 5152429512342820788, guid: c36ed339a5173234bb82dbe262c117a6, type: 3}
-  - {fileID: 7418795591229077334, guid: cb40a6c55d6258947a5cace21112d91b, type: 3}
+  - {fileID: 5152429512342820788, guid: 5641dd1a2550ce5418c7928b2a7c6df1, type: 3}
+  - {fileID: 7418795591229077334, guid: 6b04837542f32e4429800f97c1fb7a6e, type: 3}
   obstacleSpawnMinInterval: 2
   obstacleSpawnMaxInterval: 6
   obstacleSpeedMin: 1

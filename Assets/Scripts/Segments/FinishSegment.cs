@@ -1,3 +1,4 @@
+using Managers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,15 +9,15 @@ namespace Segments
     {
         [SerializeField] private TMPro.TMP_Text chickToPassText;
         [SerializeField] private TMPro.TMP_Text chickCountText;
-
+        [SerializeField] private float chickPassRatio = 0.5f;
         
         private int minChicksToPass = 3;
         private int maxChicksToPass = 7;
         private int chicksToPass;
-
+        
         public void Initialize(int chicksSpawned)
         {
-            maxChicksToPass = (int)(chicksSpawned * 0.7f);
+            maxChicksToPass = (int)(chicksSpawned * chickPassRatio);
             // Randomly choose a number between minChicksToPass and maxChicksToPass (inclusive)
             chicksToPass = Random.Range(minChicksToPass, maxChicksToPass + 1);
             if(chickToPassText != null)
@@ -37,7 +38,7 @@ namespace Segments
                 UpdateChickCountDisplay(currentChickCount);
                 if (currentChickCount >= chicksToPass)
                 {
-                    EventManager.Instance.TriggerPlayerPassedFinishSegment();
+                    EventManager.Instance.TriggerPlayerPassedFinishSegment(chicksToPass);
                 }
             }
         }

@@ -153,6 +153,8 @@ MonoBehaviour:
   - {fileID: 7418795591229077334, guid: cb40a6c55d6258947a5cace21112d91b, type: 3}
   - {fileID: 4076254355018491911, guid: b593f99005a469643a6daeb7942864e9, type: 3}
   - {fileID: 6555248622022947617, guid: d53eb5d3066d9ed40a519bce21193749, type: 3}
+  - {fileID: 7418795591229077334, guid: 6b04837542f32e4429800f97c1fb7a6e, type: 3}
+  - {fileID: 5152429512342820788, guid: 5641dd1a2550ce5418c7928b2a7c6df1, type: 3}
   defaultPoolSize: 200
 --- !u!4 &38022696
 Transform:
@@ -206,7 +208,10 @@ MonoBehaviour:
   - {fileID: 5204594943632346117, guid: cc030c3b3e1897c4d9921544c8e5b10b, type: 3}
   - {fileID: 5204594943632346117, guid: 1088b17b09de6a74aacf06c1fdb66669, type: 3}
   - {fileID: 5204594943632346117, guid: f2f8a91a141579644ad6b62d67f5a82f, type: 3}
-  defaultPoolSize: 200
+  - {fileID: 630318687636832141, guid: 0f9d316c8d2c350448e29926d4c48bfa, type: 3}
+  - {fileID: 630318687636832141, guid: 8482e7b6e0dbd324794541800c1d7a28, type: 3}
+  - {fileID: 630318687636832141, guid: 6f4dd47924167c44a953dda3749d6528, type: 3}
+  defaultPoolSize: 100
 --- !u!4 &134957695
 Transform:
   m_ObjectHideFlags: 0
@@ -1332,6 +1337,7 @@ MonoBehaviour:
   segmentTags:
   - RoadSegment
   - SafeSegment
+  - WaterSegment
   worldStartZ: 0
   groupMinCount: 3
   groupMaxCount: 7
@@ -2369,7 +2375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aac0252ff18535a459ff14eb14df55e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpDuration: 0.1
+  jumpDuration: 0.05
   jumpDistance: 1
   chicks: []
 --- !u!54 &1601100746

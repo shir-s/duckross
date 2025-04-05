@@ -24,6 +24,10 @@ TagManager:
   - SafeSegmentFinish
   - Border
   - ChickToPick
+  - Boat
+  - Log
+  - Obstacle1
+  - Obstacle2
   layers:
   - Default
   - TransparentFX

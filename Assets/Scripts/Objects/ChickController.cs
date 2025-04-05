@@ -13,9 +13,9 @@ namespace Objects
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Car") || other.CompareTag("Truck"))
+            if (other.CompareTag("Obstacle1") || other.CompareTag("Obstacle2"))
             {
-                _player.ReturnChicksFromIndex(gameObject);
+                _player.ReturnChicksFromChick(gameObject);
             }
         }
     }
