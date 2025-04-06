@@ -21,6 +21,7 @@ namespace Managers
         public event Action OnGameOverEvent;
         public event Action OnGameRestartEvent;
         public event Action OnMainMenuEvent;
+        public event Action OnGameOverByDeathEvent;
     
         // Invoked when enough chicks have passed the finish segment.
         public event Action<int> OnChicksPassedFinishSegment;
@@ -82,6 +83,7 @@ namespace Managers
         /// </summary>
         public void EndGame()
         {
+            Debug.Log("Game Over");
             GameOver = true;
             GameStarted = false;
             TriggerGameOver();
@@ -89,8 +91,6 @@ namespace Managers
             // Start coroutine to delay further actions.
             if (!isRestarting)
             {
-                // Show "Game Over" message.
-                /*ShowEventMessage("Game Over");*/
                 StartCoroutine(DelayMainMenu(3f)); // Wait 3 seconds (adjust as needed)
             }
         }
@@ -138,14 +138,25 @@ namespace Managers
             SetScore(requiredChicks);
             OnChicksPassedFinishSegment?.Invoke(requiredChicks);
         }
+
+        public void triggerGameOverByDeath()
+        {
+            OnGameOverByDeathEvent?.Invoke();
+            ShowEventMessage("Game Over");
+            StartCoroutine(DelayEndGame(3));
+        }
+        
+        private IEnumerator DelayEndGame(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            EndGame();
+        }
         
         
 
         // Utility methods for showing/hiding event messages.
         public void ShowEventMessage(string message)
         {
-            SoundManager.Instance.PlayGameOver();
-
             if (eventText != null)
             {
                 eventText.text = message;

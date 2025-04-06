@@ -206,7 +206,7 @@ public class PlayerController : MonoBehaviour
     private void HandleCollision()
     {
         SoundManager.Instance.PlayCarHit();
-        GameOver();
+        GameOverByDeath();
     }
 
     public void ReturnChicksFromChick(GameObject hitChick)
@@ -239,6 +239,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("ADD LISTENER");
             EventManager.Instance.OnChicksPassedFinishSegment += HandleChicksPassedFinishSegment;
+            EventManager.Instance.OnGameOverEvent += GameOver;
         }
     }
 
@@ -262,10 +263,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void GameOverByDeath()
+    {
+        SoundManager.Instance.PlayGameOver();
+        EventManager.Instance.triggerGameOverByDeath();
+        GameOver();
+    }
+
     private void GameOver()
     {
         if (chicks.Count > 0)
             ReturnChicksFromChick(chicks[0]);
-        EventManager.Instance.EndGame();
     }
 }
