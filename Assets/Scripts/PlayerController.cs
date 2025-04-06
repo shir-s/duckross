@@ -15,7 +15,8 @@ public class PlayerController : MonoBehaviour
 
     // Animation handling
     private Animator animator;
-    private Animator childAnimator;
+    [SerializeField] private Animator childAnimator;
+    [SerializeField] private GameObject child;
 
     private Vector3 startPosition = new Vector3(0, 1, 0);
     private Vector3 targetPosition;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
     private float leftBorder = -10;
     private float prevFinish = 0;
     private Vector3 prevDirection = Vector3.forward;
+
     
 
     public static PlayerController Instance { get; private set; }
@@ -47,21 +49,10 @@ public class PlayerController : MonoBehaviour
         {
             animator = GetComponent<Animator>();
         }
-        if (childAnimator == null)
-        {
-            childAnimator = GetComponentInChildren<Animator>();
-        }
     }
     
     private void Update()
     {
-        /*if(animator != null)
-        {
-            bool idleState = !isJumping;
-            animator.SetBool("IsIdle", idleState);
-            Debug.Log("IsIdle set to: " + idleState);
-        }*/
-
         // Reset canPassFinish once the player has moved past the finish trigger point.
         if (canPassFinish && transform.position.z > finishPassStartZ + 10)
         {
@@ -109,13 +100,13 @@ public class PlayerController : MonoBehaviour
             {
                 // Update rotation based on direction.
                 if (jumpDirection == Vector3.forward)
-                    transform.rotation = Quaternion.Euler(0, 0, 0);
+                    transform.rotation = Quaternion.Euler(90, 0, 0);
                 else if (jumpDirection == Vector3.back)
-                    transform.rotation = Quaternion.Euler(0, 180, 0);
+                    transform.rotation = Quaternion.Euler(90, 180, 0);
                 else if (jumpDirection == Vector3.left)
-                    transform.rotation = Quaternion.Euler(0, -90, 0);
+                    transform.rotation = Quaternion.Euler(90, -90, 0);
                 else if (jumpDirection == Vector3.right)
-                    transform.rotation = Quaternion.Euler(0, 90, 0);
+                    transform.rotation = Quaternion.Euler(90, 90, 0);
 
                 prevDirection = jumpDirection;
                 StartCoroutine(Jump(jumpDirection));
@@ -203,7 +194,7 @@ public class PlayerController : MonoBehaviour
         {
             chicks.Add(chick);
             chick.tag = "Chick";
-            chick.AddComponent<ChickController>();
+            /*chick.AddComponent<ChickController>();*/
             SoundManager.Instance.PlayCollectChick();
         }
         ChickCount = chicks.Count;
@@ -212,23 +203,14 @@ public class PlayerController : MonoBehaviour
     private void HandleCollision()
     {
         SoundManager.Instance.PlayCarHit();
-        if (childAnimator != null)
-        {
-            Debug.Log("child animator enabled");
-            childAnimator.enabled = false;
-        }
 
         if (animator != null)
         {
-            SpriteRenderer childSprite = GetComponentInChildren<SpriteRenderer>();
-            if (childSprite != null)
-            {
-                childSprite.enabled = false;
-            }
-            Debug.Log("animator enabled");
+            childAnimator.enabled = false;
+            child.SetActive(false);
             animator.enabled = true;
-            gameObject.transform.rotation = Quaternion.Euler(90, 0, 0);
-            gameObject.transform.position =  new Vector3(gameObject.transform.position.x, gameObject.transform.position.y+10, gameObject.transform.position.z);  ;
+            /*gameObject.transform.rotation = Quaternion.Euler(90, 0, 0);*/
+            gameObject.transform.position =  new Vector3(gameObject.transform.position.x, gameObject.transform.position.y+1, gameObject.transform.position.z);  ;
             animator.SetTrigger("Death");
         }
         GameOverByDeath();
@@ -248,7 +230,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+        gameObject.transform.rotation = Quaternion.Euler(90, 0, 0);
         transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         isJumping = false;
         transform.position = startPosition;
@@ -260,16 +242,15 @@ public class PlayerController : MonoBehaviour
         prevFinish = 0;
         prevDirection = Vector3.forward;
         
-        SpriteRenderer childSprite = GetComponentInChildren<SpriteRenderer>();
-        if (childSprite != null)
-        {
-            childSprite.enabled = false;
-        }
+        child.SetActive(true);
+        /*animator.enabled = false;*/
         
         if (childAnimator != null)
         {
             childAnimator.enabled = true;
+            childAnimator.Play("DuckRun");
         }
+
 
         if (EventManager.Instance != null)
         {

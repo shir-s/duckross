@@ -71,8 +71,8 @@ MonoBehaviour:
   chickToPassText: {fileID: 951948164155048794}
   chickCountText: {fileID: 1841478484282811068}
   chickPassRatio: 0.5
-  initialSprite: {fileID: 299062797, guid: 6a097ea372928094dbc954400cb31a1e, type: 3}
-  passedSprite: {fileID: -329511927, guid: 6a097ea372928094dbc954400cb31a1e, type: 3}
+  initialSprite: {fileID: 1337816162, guid: aa5d63e1c4b86ae479ab1a29cae61817, type: 3}
+  passedSprite: {fileID: 743548341, guid: aa5d63e1c4b86ae479ab1a29cae61817, type: 3}
 --- !u!212 &7669889752410601467
 SpriteRenderer:
   m_ObjectHideFlags: 0

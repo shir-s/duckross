@@ -48,6 +48,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60151e83bf979e7448ec70819b92d337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  child: {fileID: 8947048072990066436}
+  childAnimator: {fileID: 8111466121256196349}
+  animator: {fileID: 3736524340139310762}
 --- !u!54 &3998420064876005589
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -180,7 +183,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8591706822641223694, guid: 36d81ca2a6c9f7548a3839f065af8681, type: 3}
       propertyPath: m_Name
-      value: Chick
+      value: Chick1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3163209319120339369, guid: 36d81ca2a6c9f7548a3839f065af8681, type: 3}
@@ -195,6 +198,11 @@ PrefabInstance:
 --- !u!4 &1422614335532995460 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1778841826076957838, guid: 36d81ca2a6c9f7548a3839f065af8681, type: 3}
+  m_PrefabInstance: {fileID: 797580255404363530}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &8111466121256196349 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8899152934758602743, guid: 36d81ca2a6c9f7548a3839f065af8681, type: 3}
   m_PrefabInstance: {fileID: 797580255404363530}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &8947048072990066436 stripped
