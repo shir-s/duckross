@@ -37,7 +37,7 @@ namespace Pools
 
         // Pulls a segment from the pool by its tag, positions it, and returns it.
         // If the pool is empty, it instantiates a new segment.
-        public GameObject GetSegmentFromPool(string tag, Vector3 position, Quaternion rotation)
+        public GameObject GetSegmentFromPool(string tag, Vector3 position)
         {
             if (!poolDictionary.ContainsKey(tag))
             {
@@ -58,16 +58,18 @@ namespace Pools
                     Debug.LogWarning($"No segment prefab found for tag '{tag}'.");
                     return null;
                 }
-                segment = Instantiate(prefab, position, rotation);
+                segment = Instantiate(prefab, position, prefab.transform.rotation);
             }
             else
             {
                 segment = pool.Dequeue();
                 segment.transform.position = position;
-                segment.transform.rotation = rotation;
                 segment.SetActive(true);
             }
-
+            /*if (tag.Contains("Safe") && !tag.EndsWith("Finish"))
+            {
+                segment.transform.localScale = new Vector3(1.3f,0.3f,0.1f); // Safe
+            }*/
             return segment;
         }
 

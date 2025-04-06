@@ -5,6 +5,7 @@ namespace Managers
 {
     public class EventManager : MonoBehaviour
     {
+        
         public static EventManager Instance { get; private set; }
 
         // Game state properties.

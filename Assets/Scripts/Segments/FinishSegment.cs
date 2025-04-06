@@ -1,15 +1,19 @@
 using Managers;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Segments
 {
     public class FinishSegment : MonoBehaviour
     {
-        [SerializeField] private TMPro.TMP_Text chickToPassText;
-        [SerializeField] private TMPro.TMP_Text chickCountText;
+        [SerializeField] private TMP_Text chickToPassText;
+        [SerializeField] private TMP_Text chickCountText;
         [SerializeField] private float chickPassRatio = 0.5f;
+        
+        [SerializeField] private Sprite initialSprite; // Sprite for when the finish segment is initialized.
+        [SerializeField] private Sprite passedSprite;  // Sprite for when the player passes the finish.
+        
+        private SpriteRenderer spriteRenderer;
         
         private int minChicksToPass = 3;
         private int maxChicksToPass = 7;
@@ -21,14 +25,22 @@ namespace Segments
             // Randomly choose a number between minChicksToPass and maxChicksToPass (inclusive)
             chicksToPass = Random.Range(minChicksToPass, maxChicksToPass + 1);
             if(chickToPassText != null)
-                chickToPassText.text = "Chicks to pass: " + chicksToPass.ToString();
+                /*chickToPassText.text = "Chicks to pass: " + chicksToPass.ToString();*/
+                chickToPassText.text = chicksToPass.ToString();
+
+            // Get or cache the SpriteRenderer and set it to the initial sprite.
+            if (spriteRenderer == null)
+                spriteRenderer = GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null && initialSprite != null)
+                spriteRenderer.sprite = initialSprite;
         }
         
         private void OnEnable()
         {
-
+            if (spriteRenderer == null)
+                spriteRenderer = GetComponent<SpriteRenderer>();
         }
-
+        
         private void OnTriggerEnter(Collider other)
         {
             if(other.CompareTag("Player"))
@@ -38,11 +50,16 @@ namespace Segments
                 UpdateChickCountDisplay(currentChickCount);
                 if (currentChickCount >= chicksToPass)
                 {
+                    // Change sprite to passed sprite.
+                    if (spriteRenderer != null && passedSprite != null)
+                    {
+                        spriteRenderer.sprite = passedSprite;
+                    }
                     EventManager.Instance.TriggerPlayerPassedFinishSegment(chicksToPass);
                 }
             }
         }
-
+        
         private void UpdateChickCountDisplay(int count)
         {
             if(chickCountText != null)

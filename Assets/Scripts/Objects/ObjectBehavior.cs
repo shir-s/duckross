@@ -7,7 +7,7 @@ namespace Objects
     {
         private float moveSpeed = 5f;
         // When the object travels this distance, it will be returned to the pool.
-        private float distanceThreshold = 20f;
+        private float distanceThreshold = 100f;
 
         private Vector3 moveDirection = Vector3.zero;
         private Vector3 initialPosition;   // Where the object spawned.
@@ -15,10 +15,9 @@ namespace Objects
         private Segment spawnerSegment;
 
         // Call this method to set the movement direction.
-        public void Initialize(Vector3 direction, float speed, float distance)
+        public void Initialize(Vector3 direction, float speed)
         {
             moveSpeed = speed;
-            distanceThreshold = distance;
             /*Debug.Log($"Speed: {moveSpeed}, Distance: {distanceThreshold}");*/
             // Only consider the X component; ignore Y and Z.
             moveDirection = new Vector3(-direction.x, 0, 0);
@@ -42,6 +41,7 @@ namespace Objects
             // When the traveled distance exceeds the threshold, return the object to the pool.
             if (traveled >= distanceThreshold)
             {
+                Debug.LogWarning($"Object traveled: {traveled}");
                 spawnerSegment.ReturnOject(gameObject);
             }
         }

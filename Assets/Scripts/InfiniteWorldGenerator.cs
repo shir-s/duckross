@@ -101,7 +101,7 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
             
         if (chosenTag.Equals("SafeSegment"))
         {
-            groupCount = 2;
+            groupCount = 3;
         }
         
         previousSegmentTag = chosenTag;
@@ -154,13 +154,14 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         }
         // Position the new segment.
         Vector3 spawnPosition = new Vector3(0, 0, nextSegmentZ);
-        GameObject newSegment = poolManager.GetSegmentFromPool(tag, spawnPosition, Quaternion.identity);
+        GameObject newSegment = poolManager.GetSegmentFromPool(tag, spawnPosition);
         
         if (newSegment != null)
         {
             activeSegments.Enqueue(newSegment);
             Segment seg = newSegment.GetComponent<Segment>();
-            float zLength = seg != null ? seg.GetZLength() : 2f;
+            /*float zLength = seg != null ? seg.GetZLength() : 2f;*/
+            float zLength = 2f;
             nextSegmentZ += zLength;
             
             // If this is a finish segment, add it to the finishSegments list.

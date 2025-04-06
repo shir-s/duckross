@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Managers;
 using Objects;
 using Pools;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -11,20 +12,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpDuration = 0.2f;  
     [SerializeField] private float jumpDistance = 2f;      
     public List<GameObject> chicks = new List<GameObject>();
-    
+
+    // Animation handling
+    private Animator animator;
+
     private Vector3 startPosition = new Vector3(0, 1, 0);
     private Vector3 targetPosition;
     private bool isJumping = false;
     private List<Vector3> previousPositions = new List<Vector3>();
 
-    // New variables for finish segment logic.
+    // Variables for finish segment logic.
     private bool canPassFinish = false;
     private float finishPassStartZ = 0;
     private float rightBorder = 10;
     private float leftBorder = -10;
     private float prevFinish = 0;
     private Vector3 prevDirection = Vector3.forward;
-    
+
     public static PlayerController Instance { get; private set; }
     
     void Awake()
@@ -36,22 +40,32 @@ public class PlayerController : MonoBehaviour
         }
         Instance = this;
         // Optionally: DontDestroyOnLoad(gameObject);
+        // Automatically assign the animator if it's not already set.
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
     }
     
     private void Update()
     {
+        if(animator != null)
+        {
+            bool idleState = !isJumping;
+            animator.SetBool("IsIdle", idleState);
+            Debug.Log("IsIdle set to: " + idleState);
+        }
+
         // Reset canPassFinish once the player has moved past the finish trigger point.
-        if (canPassFinish && transform.position.z > finishPassStartZ + 10 )
+        if (canPassFinish && transform.position.z > finishPassStartZ + 10)
         {
             canPassFinish = false;
             finishPassStartZ = 0;
         }
     
-        // If the player is on a finish segment, not allowed to pass, and has moved beyond the saved finish segment z,
-        // check for the down arrow to push them back.
+        // If the player is on a finish segment and not allowed to pass, push them back.
         if (finishPassStartZ != 0 && !canPassFinish && transform.position.z > finishPassStartZ)
         {
-            // Push the player backward along z (adjust the magnitude as needed).
             transform.position += new Vector3(0, 0, -1f);
         }
         if (transform.position.z < prevFinish)
@@ -67,12 +81,10 @@ public class PlayerController : MonoBehaviour
             transform.position += new Vector3(1f, 0, 0);
         }
     
-        // Existing jump logic...
+        // Handle directional input from arrow keys or WASD, plus space for repeating last direction.
         if (!isJumping)
         {
             Vector3 jumpDirection = Vector3.zero;
-        
-            // Use arrow keys or WASD for directional input.
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
                 jumpDirection = Vector3.forward;
             else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
@@ -81,7 +93,6 @@ public class PlayerController : MonoBehaviour
                 jumpDirection = Vector3.left;
             else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
                 jumpDirection = Vector3.right;
-            // Space jumps in the last direction if available.
             else if (Input.GetKeyDown(KeyCode.Space))
             {
                 if (prevDirection != Vector3.zero)
@@ -90,7 +101,7 @@ public class PlayerController : MonoBehaviour
 
             if (jumpDirection != Vector3.zero && jumpDirection != -prevDirection)
             {
-                // Update rotation based on the new direction.
+                // Update rotation based on direction.
                 if (jumpDirection == Vector3.forward)
                     transform.rotation = Quaternion.Euler(90, 0, 0);
                 else if (jumpDirection == Vector3.back)
@@ -105,6 +116,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    
     private IEnumerator Jump(Vector3 direction)
     {
         isJumping = true;
@@ -134,14 +146,13 @@ public class PlayerController : MonoBehaviour
             if (i + 1 < previousPositions.Count)
             {
                 chicks[i].transform.position = previousPositions[i + 1];
-                
-                // Calculate the direction the chick should look toward (from its current position to its previous position)
+
+                // Calculate the direction the chick should face.
                 Vector3 direction = previousPositions[i] - previousPositions[i + 1];
-                if(direction != Vector3.zero)
+                if (direction != Vector3.zero)
                 {
-                    // Create a rotation that looks in that direction.
                     Quaternion lookRotation = Quaternion.LookRotation(direction);
-                    // Adjust the rotation by the constant offset (around the Y axis, for example).
+                    // Adjust rotation with an offset (example offset here, adjust as needed).
                     Quaternion adjustedRotation = lookRotation * Quaternion.Euler(90, 0, 0);
                     chicks[i].transform.rotation = adjustedRotation;
                 }
@@ -170,6 +181,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("SafeSegmentFinish"))
+        {
+            // Optionally set onFinishSegment false if needed.
+        }
+    }
+
     private void AddChick()
     {
         GameObject chick = ObjectPoolManager.Instance.GetObjectFromPool("Chick", transform.position);
@@ -184,9 +203,6 @@ public class PlayerController : MonoBehaviour
 
     private void HandleCollision()
     {
-        /*if (chicks.Count > 0)
-            ReturnChicksFromChick(chicks[0]);
-        else*/
         GameOver();
     }
 
@@ -204,16 +220,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        // Subscribe to event.
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.OnGameStartEvent += HandleGameStart;
-            EventManager.Instance.OnChicksPassedFinishSegment += HandleChicksPassedFinishSegment;
-        }
-    }
-
-    private void HandleGameStart()
-    {
+        transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         isJumping = false;
         transform.position = startPosition;
         targetPosition = transform.position;
@@ -223,9 +230,12 @@ public class PlayerController : MonoBehaviour
         canPassFinish = false;
         prevFinish = 0;
         prevDirection = Vector3.forward;
+        animator.Play("DuckIdle");
 
-        if (chicks.Count > 0)
-            ReturnChicksFromChick(chicks[0]);
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.OnChicksPassedFinishSegment += HandleChicksPassedFinishSegment;
+        }
     }
 
     private void OnDisable()
@@ -241,7 +251,6 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"HandleChicksPassedFinishSegment {requiredChicks}");
         if (prevFinish + 10 < transform.position.z)
         {
-            // When enough chicks have passed the finish segment, set canPassFinish true and store current z.
             canPassFinish = true;
             finishPassStartZ = transform.position.z;
             prevFinish = transform.position.z;
