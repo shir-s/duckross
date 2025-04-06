@@ -14,6 +14,7 @@ namespace Managers
         public bool GameOver { get; private set; }
         private bool isRestarting = false;
         public int curentScore = 0;
+        private int highScore = 0;
 
         // Game state events.
         public event Action OnGameStartEvent;
@@ -30,6 +31,8 @@ namespace Managers
 
         // NEW: Additional text that is always displayed on top.
         [SerializeField] private TextMeshProUGUI scoreText; // Assign in Inspector.
+        [SerializeField] private TextMeshProUGUI highScoreText; // Assign in Inspector.
+
     
         private void Awake()
         {
@@ -49,6 +52,8 @@ namespace Managers
             {
                 eventText.text = "";
             }
+
+            highScore = 0;
         }
 
         /// <summary>
@@ -60,9 +65,16 @@ namespace Managers
             GameStarted = true;
             GameOver = false;
             isRestarting = false;
-            SetScore(0);
             TriggerGameStart();
             // Additional game-start logic can be added here.
+            if (scoreText != null)
+            {
+                scoreText.text = "Score: 0";
+            }
+            if (highScoreText != null)
+            {
+                highScoreText.text = "High Score: " + highScore.ToString();
+            }
         }
 
         /// <summary>
@@ -73,13 +85,12 @@ namespace Managers
             GameOver = true;
             GameStarted = false;
             TriggerGameOver();
-            SoundManager.Instance.PlayGameOver();
-            // Show "Game Over" message.
-            HideEventMessage();
-            ShowEventMessage("Game Over");
+
             // Start coroutine to delay further actions.
             if (!isRestarting)
             {
+                // Show "Game Over" message.
+                /*ShowEventMessage("Game Over");*/
                 StartCoroutine(DelayMainMenu(3f)); // Wait 3 seconds (adjust as needed)
             }
         }
@@ -127,10 +138,14 @@ namespace Managers
             SetScore(requiredChicks);
             OnChicksPassedFinishSegment?.Invoke(requiredChicks);
         }
+        
+        
 
         // Utility methods for showing/hiding event messages.
         public void ShowEventMessage(string message)
         {
+            SoundManager.Instance.PlayGameOver();
+
             if (eventText != null)
             {
                 eventText.text = message;
@@ -152,6 +167,11 @@ namespace Managers
             if (scoreText != null)
             {
                 scoreText.text = "Score: " + curentScore.ToString();
+            }
+            if (highScoreText != null && (highScore < curentScore))
+            {
+                highScore = curentScore;
+                highScoreText.text = "High Score: " + highScore.ToString();
             }
         }
     }

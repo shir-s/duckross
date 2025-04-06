@@ -7,7 +7,7 @@ namespace Objects
     {
         private float moveSpeed = 5f;
         // When the object travels this distance, it will be returned to the pool.
-        private float distanceThreshold = 100f;
+        private float distanceThreshold = 50f;
 
         private Vector3 moveDirection = Vector3.zero;
         private Vector3 initialPosition;   // Where the object spawned.

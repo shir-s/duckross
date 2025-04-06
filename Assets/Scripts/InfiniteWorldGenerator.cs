@@ -26,7 +26,7 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
     // Safe zone settings.
     private string safeZoneTag = "SafeSegment"; // Base tag for safe zone segments.
     [SerializeField] private int initialSafeZoneCount = 6; // Initial safe zone group count if desired.
-    private float finishZoneInterval = 50f;  // Constant distance between finish zone groups.
+    private float finishZoneStartInterval = 40f;  // Constant distance between finish zone groups.
 
     // Internal tracking for safe zone spawn.
     private float lastPlacedFinishZoneZ = 0f;
@@ -79,9 +79,8 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
 
     void SpawnSegment()
     {
-        finishZoneInterval = 10;
         // First, check if it's time to spawn a safe zone group.
-        if (nextSegmentZ >= lastPlacedFinishZoneZ + finishZoneInterval && !previousSegmentTag.Equals(safeZoneTag))
+        if (nextSegmentZ >= lastPlacedFinishZoneZ + finishZoneStartInterval && !previousSegmentTag.Equals(safeZoneTag))
         {
             lastPlacedFinishZoneZ = nextSegmentZ;
             SpawnFinishZoneGroup();
@@ -224,7 +223,7 @@ public class InfiniteWorldGenerator : MonoBehaviour, IGameStateListener
         // Reset generator state.
         nextSegmentZ = worldStartZ;
         prevFinishZoneZ = worldStartZ; // No finish yet.
-        nextFinishZoneZ = worldStartZ + finishZoneInterval;
+        nextFinishZoneZ = worldStartZ + finishZoneStartInterval;
         previousSegmentTag = "";
         activeSegments.Clear();
 
