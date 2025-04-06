@@ -40,10 +40,10 @@ public class PlayerController : MonoBehaviour
         }
         Instance = this;
         // Optionally: DontDestroyOnLoad(gameObject);
-        // Automatically assign the animator if it's not already set.
+        // Automatically assign the animator from the child if it's not already set.
         if (animator == null)
         {
-            animator = GetComponent<Animator>();
+            animator = GetComponentInChildren<Animator>();
         }
     }
     
@@ -103,13 +103,13 @@ public class PlayerController : MonoBehaviour
             {
                 // Update rotation based on direction.
                 if (jumpDirection == Vector3.forward)
-                    transform.rotation = Quaternion.Euler(90, 0, 0);
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
                 else if (jumpDirection == Vector3.back)
-                    transform.rotation = Quaternion.Euler(90, 180, 0);
+                    transform.rotation = Quaternion.Euler(0, 180, 0);
                 else if (jumpDirection == Vector3.left)
-                    transform.rotation = Quaternion.Euler(90, -90, 0);
+                    transform.rotation = Quaternion.Euler(0, -90, 0);
                 else if (jumpDirection == Vector3.right)
-                    transform.rotation = Quaternion.Euler(90, 90, 0);
+                    transform.rotation = Quaternion.Euler(0, 90, 0);
 
                 prevDirection = jumpDirection;
                 StartCoroutine(Jump(jumpDirection));
@@ -119,6 +119,7 @@ public class PlayerController : MonoBehaviour
     
     private IEnumerator Jump(Vector3 direction)
     {
+        // play jump sound 
         isJumping = true;
         Vector3 start = transform.position;
         targetPosition = start + direction.normalized * jumpDistance;
@@ -197,12 +198,14 @@ public class PlayerController : MonoBehaviour
             chicks.Add(chick);
             chick.tag = "Chick";
             chick.AddComponent<ChickController>();
+            SoundManager.Instance.PlayCollectChick();
         }
         ChickCount = chicks.Count;
     }
 
     private void HandleCollision()
     {
+        SoundManager.Instance.PlayCarHit();
         GameOver();
     }
 
@@ -230,10 +233,11 @@ public class PlayerController : MonoBehaviour
         canPassFinish = false;
         prevFinish = 0;
         prevDirection = Vector3.forward;
-        animator.Play("DuckIdle");
+        /*animator.Play("DuckIdle");*/
 
         if (EventManager.Instance != null)
         {
+            Debug.Log("ADD LISTENER");
             EventManager.Instance.OnChicksPassedFinishSegment += HandleChicksPassedFinishSegment;
         }
     }

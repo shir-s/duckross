@@ -1,17 +1,19 @@
 using System;
+using System.Collections;
 using UnityEngine;
+using TMPro;
 
 namespace Managers
 {
     public class EventManager : MonoBehaviour
     {
-        
         public static EventManager Instance { get; private set; }
 
         // Game state properties.
         public bool GameStarted { get; private set; }
         public bool GameOver { get; private set; }
         private bool isRestarting = false;
+        public int curentScore = 0;
 
         // Game state events.
         public event Action OnGameStartEvent;
@@ -19,12 +21,18 @@ namespace Managers
         public event Action OnGameRestartEvent;
         public event Action OnMainMenuEvent;
     
-        // Invoked when the number of chicks following the player is sufficient to pass the finish segment.
+        // Invoked when enough chicks have passed the finish segment.
         public event Action<int> OnChicksPassedFinishSegment;
 
+        // UI elements for displaying event messages.
+        [SerializeField] private Canvas eventCanvas; // Canvas that holds event messages (assign in Inspector)
+        [SerializeField] private TextMeshProUGUI eventText; // Text element on the canvas
+
+        // NEW: Additional text that is always displayed on top.
+        [SerializeField] private TextMeshProUGUI scoreText; // Assign in Inspector.
+    
         private void Awake()
         {
-            // Standard singleton pattern.
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
@@ -32,6 +40,15 @@ namespace Managers
             }
             Instance = this;
             // Optionally: DontDestroyOnLoad(gameObject);
+
+            // Ensure the event canvas is initially hidden.
+            if (eventCanvas != null)
+                eventCanvas.enabled = true;
+            
+            if (eventText != null)
+            {
+                eventText.text = "";
+            }
         }
 
         /// <summary>
@@ -39,9 +56,11 @@ namespace Managers
         /// </summary>
         public void StartGame()
         {
+            curentScore = 0;
             GameStarted = true;
             GameOver = false;
             isRestarting = false;
+            SetScore(0);
             TriggerGameStart();
             // Additional game-start logic can be added here.
         }
@@ -54,11 +73,21 @@ namespace Managers
             GameOver = true;
             GameStarted = false;
             TriggerGameOver();
-            // Additional game-over logic can be added here.
+            SoundManager.Instance.PlayGameOver();
+            // Show "Game Over" message.
+            HideEventMessage();
+            ShowEventMessage("Game Over");
+            // Start coroutine to delay further actions.
             if (!isRestarting)
             {
-                TriggerMainMenu();
+                StartCoroutine(DelayMainMenu(3f)); // Wait 3 seconds (adjust as needed)
             }
+        }
+
+        private IEnumerator DelayMainMenu(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            TriggerMainMenu();
         }
 
         /// <summary>
@@ -95,7 +124,36 @@ namespace Managers
         // Trigger method for when enough chicks have passed the finish segment.
         public void TriggerPlayerPassedFinishSegment(int requiredChicks)
         {
+            SetScore(requiredChicks);
             OnChicksPassedFinishSegment?.Invoke(requiredChicks);
+        }
+
+        // Utility methods for showing/hiding event messages.
+        public void ShowEventMessage(string message)
+        {
+            if (eventText != null)
+            {
+                eventText.text = message;
+            }
+        }
+
+        public void HideEventMessage()
+        {
+            if (eventCanvas != null)
+            {
+                eventCanvas.enabled = false;
+            }
+        }
+
+        // NEW: Utility method to set the persistent message.
+        public void SetScore(int score)
+        {
+            curentScore += score;
+            if (scoreText != null)
+            {
+                scoreText.text = "Score: " + curentScore.ToString();
+            }
         }
     }
 }
+

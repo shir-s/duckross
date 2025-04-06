@@ -41,7 +41,6 @@ namespace Objects
             // When the traveled distance exceeds the threshold, return the object to the pool.
             if (traveled >= distanceThreshold)
             {
-                Debug.LogWarning($"Object traveled: {traveled}");
                 spawnerSegment.ReturnOject(gameObject);
             }
         }
