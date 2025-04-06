@@ -220,7 +220,15 @@ public class PlayerController : MonoBehaviour
 
         if (animator != null)
         {
+            SpriteRenderer childSprite = GetComponentInChildren<SpriteRenderer>();
+            if (childSprite != null)
+            {
+                childSprite.enabled = false;
+            }
             Debug.Log("animator enabled");
+            animator.enabled = true;
+            gameObject.transform.rotation = Quaternion.Euler(90, 0, 0);
+            gameObject.transform.position =  new Vector3(gameObject.transform.position.x, gameObject.transform.position.y+10, gameObject.transform.position.z);  ;
             animator.SetTrigger("Death");
         }
         GameOverByDeath();
@@ -240,6 +248,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
+        gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
         transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         isJumping = false;
         transform.position = startPosition;
@@ -250,6 +259,13 @@ public class PlayerController : MonoBehaviour
         canPassFinish = false;
         prevFinish = 0;
         prevDirection = Vector3.forward;
+        
+        SpriteRenderer childSprite = GetComponentInChildren<SpriteRenderer>();
+        if (childSprite != null)
+        {
+            childSprite.enabled = false;
+        }
+        
         if (childAnimator != null)
         {
             childAnimator.enabled = true;

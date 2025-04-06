@@ -1982,7 +1982,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3.06, y: 4.72}
+  m_Size: {x: 9.32, y: 12.011959}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
@@ -3793,11 +3793,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9163072110446471849, guid: bcf6149ceab01f74cb773d654743b659, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 9163072110446471849, guid: bcf6149ceab01f74cb773d654743b659, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 9163072110446471849, guid: bcf6149ceab01f74cb773d654743b659, type: 3}
       propertyPath: m_LocalRotation.y
@@ -3809,7 +3809,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9163072110446471849, guid: bcf6149ceab01f74cb773d654743b659, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 9163072110446471849, guid: bcf6149ceab01f74cb773d654743b659, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
