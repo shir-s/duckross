@@ -1,4 +1,5 @@
 using UnityEngine;
+using Managers;
 
 namespace Objects
 {
@@ -15,6 +16,7 @@ namespace Objects
         {
             if (other.CompareTag("Obstacle1") || other.CompareTag("Obstacle2"))
             {
+                SoundManager.Instance.PlayCarHit();
                 _player.ReturnChicksFromChick(gameObject);
             }
         }

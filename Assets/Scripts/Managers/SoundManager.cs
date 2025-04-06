@@ -17,14 +17,15 @@ namespace Managers
         public AudioClip carHit;
         /*public AudioClip buttonClick;*/
         public AudioClip gameOver;
-
+        public AudioClip buttonClick;
+        
         private void Awake()
         {
             // Singleton – ensures only one SoundManager exists
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject); // אם את רוצה שהמוזיקה תמשיך בין סצנות
+                DontDestroyOnLoad(gameObject);
             }
             else
             {
@@ -54,12 +55,13 @@ namespace Managers
                 sfxSource.PlayOneShot(clip);
             }
         }
-
+        
         // Optional helper methods
         /*public void PlayDuckWalk() => PlaySFX(duckWalk);*/
         public void PlayCollectChick() => PlaySFX(collectChick);
         public void PlayCarHit() => PlaySFX(carHit);
         /*public void PlayButtonClick() => PlaySFX(buttonClick);*/
         public void PlayGameOver() => PlaySFX(gameOver);
+        public void PlayButtonClick() => PlaySFX(buttonClick);
     }
 }
