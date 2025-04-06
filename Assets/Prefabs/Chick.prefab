@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3177313354953491834}
   - component: {fileID: 3998420064876005589}
   - component: {fileID: 2405882720976177301}
+  - component: {fileID: 3736524340139310762}
   m_Layer: 0
   m_Name: Chick
   m_TagString: Chick
@@ -95,6 +96,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.27917382, y: 0.4261352, z: 4.241371}
   m_Center: {x: 0.009140328, y: -0.00030310452, z: 0.50286293}
+--- !u!95 &3736524340139310762
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3627306526715038972}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5a8c144452f86d544a1618f0df5a215c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &797580255404363530
 PrefabInstance:
   m_ObjectHideFlags: 0

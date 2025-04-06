@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
 
     // Animation handling
     private Animator animator;
+    private Animator childAnimator;
 
     private Vector3 startPosition = new Vector3(0, 1, 0);
     private Vector3 targetPosition;
@@ -28,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private float leftBorder = -10;
     private float prevFinish = 0;
     private Vector3 prevDirection = Vector3.forward;
+    
 
     public static PlayerController Instance { get; private set; }
     
@@ -43,18 +45,22 @@ public class PlayerController : MonoBehaviour
         // Automatically assign the animator from the child if it's not already set.
         if (animator == null)
         {
-            animator = GetComponentInChildren<Animator>();
+            animator = GetComponent<Animator>();
+        }
+        if (childAnimator == null)
+        {
+            childAnimator = GetComponentInChildren<Animator>();
         }
     }
     
     private void Update()
     {
-        if(animator != null)
+        /*if(animator != null)
         {
             bool idleState = !isJumping;
             animator.SetBool("IsIdle", idleState);
             Debug.Log("IsIdle set to: " + idleState);
-        }
+        }*/
 
         // Reset canPassFinish once the player has moved past the finish trigger point.
         if (canPassFinish && transform.position.z > finishPassStartZ + 10)
@@ -206,6 +212,17 @@ public class PlayerController : MonoBehaviour
     private void HandleCollision()
     {
         SoundManager.Instance.PlayCarHit();
+        if (childAnimator != null)
+        {
+            Debug.Log("child animator enabled");
+            childAnimator.enabled = false;
+        }
+
+        if (animator != null)
+        {
+            Debug.Log("animator enabled");
+            animator.SetTrigger("Death");
+        }
         GameOverByDeath();
     }
 
@@ -233,7 +250,10 @@ public class PlayerController : MonoBehaviour
         canPassFinish = false;
         prevFinish = 0;
         prevDirection = Vector3.forward;
-        /*animator.Play("DuckIdle");*/
+        if (childAnimator != null)
+        {
+            childAnimator.enabled = true;
+        }
 
         if (EventManager.Instance != null)
         {
