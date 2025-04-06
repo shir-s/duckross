@@ -76,6 +76,10 @@ namespace Managers
             {
                 highScoreText.text = "High Score: " + highScore.ToString();
             }
+            if (eventText != null)
+            {
+                eventText.text = "";
+            }
         }
 
         /// <summary>
@@ -91,7 +95,7 @@ namespace Managers
             // Start coroutine to delay further actions.
             if (!isRestarting)
             {
-                StartCoroutine(DelayMainMenu(3f)); // Wait 3 seconds (adjust as needed)
+                StartCoroutine(DelayMainMenu(1.5f)); // Wait 1 seconds (adjust as needed)
             }
         }
 
@@ -143,13 +147,14 @@ namespace Managers
         {
             OnGameOverByDeathEvent?.Invoke();
             ShowEventMessage("Game Over");
-            StartCoroutine(DelayEndGame(3));
+            StartCoroutine(DelayEndGame(1.5f));
         }
         
         private IEnumerator DelayEndGame(float delay)
         {
             yield return new WaitForSeconds(delay);
             EndGame();
+            HideEventMessage();
         }
         
         
@@ -165,9 +170,9 @@ namespace Managers
 
         public void HideEventMessage()
         {
-            if (eventCanvas != null)
+            if (eventText != null)
             {
-                eventCanvas.enabled = false;
+                eventText.text = "";
             }
         }
 
