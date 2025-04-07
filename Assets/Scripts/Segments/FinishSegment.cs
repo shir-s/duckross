@@ -1,6 +1,8 @@
 using Managers;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Segments
 {
@@ -21,7 +23,8 @@ namespace Segments
         
         public void Initialize(int chicksSpawned)
         {
-            maxChicksToPass = (int)(chicksSpawned * chickPassRatio);
+            maxChicksToPass = (int)(chicksSpawned * chickPassRatio)-1;
+            maxChicksToPass = math.max(maxChicksToPass, minChicksToPass);
             // Randomly choose a number between minChicksToPass and maxChicksToPass (inclusive)
             chicksToPass = Random.Range(minChicksToPass, maxChicksToPass + 1);
             if(chickToPassText != null)

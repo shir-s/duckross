@@ -53,11 +53,13 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
     {
+        var lastPassedFinishZ = 0f;
         // Reset canPassFinish once the player has moved past the finish trigger point.
-        if (canPassFinish && transform.position.z > finishPassStartZ + 10)
+        if (canPassFinish && transform.position.z > finishPassStartZ + 5)
         {
             canPassFinish = false;
             finishPassStartZ = 0;
+            lastPassedFinishZ = finishPassStartZ;
         }
     
         // If the player is on a finish segment and not allowed to pass, push them back.
@@ -231,7 +233,7 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         gameObject.transform.rotation = Quaternion.Euler(90, 0, 0);
-        transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        transform.localScale = new Vector3(0.07f, 0.07f, 0.07f);
         isJumping = false;
         transform.position = startPosition;
         targetPosition = transform.position;
