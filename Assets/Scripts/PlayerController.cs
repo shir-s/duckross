@@ -31,7 +31,10 @@ public class PlayerController : MonoBehaviour
     private float prevFinish = 0;
     private Vector3 prevDirection = Vector3.forward;
 
-    
+    //ADD
+    private float moveDelay = 0.15f;
+    private float moveTimer = 0f;
+
 
     public static PlayerController Instance { get; private set; }
     
@@ -83,35 +86,36 @@ public class PlayerController : MonoBehaviour
         // Handle directional input from arrow keys or WASD, plus space for repeating last direction.
         if (!isJumping)
         {
+            moveTimer -= Time.deltaTime;
             Vector3 jumpDirection = Vector3.zero;
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-                jumpDirection = Vector3.forward;
-            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-                jumpDirection = Vector3.back;
-            else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-                jumpDirection = Vector3.left;
-            else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-                jumpDirection = Vector3.right;
-            else if (Input.GetKeyDown(KeyCode.Space))
-            {
-                if (prevDirection != Vector3.zero)
-                    jumpDirection = prevDirection;
-            }
 
-            if (jumpDirection != Vector3.zero && jumpDirection != -prevDirection)
+            if (moveTimer <= 0f)
             {
-                // Update rotation based on direction.
-                if (jumpDirection == Vector3.forward)
-                    transform.rotation = Quaternion.Euler(90, 0, 0);
-                else if (jumpDirection == Vector3.back)
-                    transform.rotation = Quaternion.Euler(90, 180, 0);
-                else if (jumpDirection == Vector3.left)
-                    transform.rotation = Quaternion.Euler(90, -90, 0);
-                else if (jumpDirection == Vector3.right)
-                    transform.rotation = Quaternion.Euler(90, 90, 0);
+                if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+                    jumpDirection = Vector3.forward;
+                else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
+                    jumpDirection = Vector3.back;
+                else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
+                    jumpDirection = Vector3.left;
+                else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
+                    jumpDirection = Vector3.right;
 
-                prevDirection = jumpDirection;
-                StartCoroutine(Jump(jumpDirection));
+                if (jumpDirection != Vector3.zero && jumpDirection != -prevDirection)
+                {
+                    // Update rotation based on direction
+                    if (jumpDirection == Vector3.forward)
+                        transform.rotation = Quaternion.Euler(90, 0, 0);
+                    else if (jumpDirection == Vector3.back)
+                        transform.rotation = Quaternion.Euler(90, 180, 0);
+                    else if (jumpDirection == Vector3.left)
+                        transform.rotation = Quaternion.Euler(90, -90, 0);
+                    else if (jumpDirection == Vector3.right)
+                        transform.rotation = Quaternion.Euler(90, 90, 0);
+
+                    prevDirection = jumpDirection;
+                    StartCoroutine(Jump(jumpDirection));
+                    moveTimer = moveDelay; // אתחול טיימר
+                }
             }
         }
     }
@@ -232,6 +236,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
+        moveTimer = 0f;
         gameObject.transform.rotation = Quaternion.Euler(90, 0, 0);
         transform.localScale = new Vector3(0.07f, 0.07f, 0.07f);
         isJumping = false;
