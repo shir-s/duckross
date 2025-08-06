@@ -1,6 +1,14 @@
+![Banner](banner.png)
 # Duc(k)ross
 
 **A fast-paced and heartwarming game where you help a brave duck rescue lost ducklings across dangerous roads and rivers.**
+<p align="center">
+  <img src="ducky.png" width="80"/>
+  <img src="ducky.png" width="80"/>
+  <img src="ducky.png" width="80"/>
+  <img src="ducky.png" width="80"/>
+</p>
+
 
 ---
 
